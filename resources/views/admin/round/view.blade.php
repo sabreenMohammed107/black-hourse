@@ -46,14 +46,22 @@
                                                 aria-labelledby="custom-tabs-one-1-tab">
                                                 <div class="card card-primary">
                                                     <!-- form start -->
-                                                    <form action="{{ route('round.update', $row->id) }}" method="post"
+                                                    <form action="{{ route('start-round') }}" method="post"
                                                         enctype="multipart/form-data">
 
-                                                        @method('PUT')
+
                                                         @csrf
-
+<input type="hidden" name="round_id" value="{{$row->id}}">
                                                         <div class="box-body">
+                                                            <div class="col-sm-6 mb-2">
+                                                            </div>
+                                                            <div class="col-sm-6 mb-2">
+                                                                <button type="submit" class="btn btn-danger">بدا المجموعه</button>
 
+                                                                <input type="text" class="form-control" value="فى الحجز">
+
+                                                            </div>
+                                                            <hr>
                                                             <div class="col-sm-6">
                                                                 <div class="form-group">
                                                                     <label for="">اسم الفرع</label>

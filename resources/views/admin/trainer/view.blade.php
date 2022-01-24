@@ -7,7 +7,7 @@
         <div class="col-md-10">
             <div class="box box-primary px-5">
                 <div class="box-header">
-                    <h3 class="box-title"> بيانات المدرب</h3>
+                    <h3 class="box-title">  بيانات المدرب - {{$row->name}} </h3>
                 </div>
 
 

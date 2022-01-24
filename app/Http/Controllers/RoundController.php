@@ -8,6 +8,7 @@ use App\Models\Day;
 use App\Models\Room;
 use App\Models\Round;
 use App\Models\Round_day;
+use App\Models\Session;
 use App\Models\Student;
 use App\Models\Student_round;
 use App\Models\Trainer;
@@ -125,7 +126,7 @@ class RoundController extends Controller
     public function show($id)
     {
         $row = Round::where('id', '=', $id)->first();
-        $roundSS=Round::where('id', '=', $id)->first();
+        $roundSS = Round::where('id', '=', $id)->first();
         $branches = Branch::all();
         $rooms = Room::all();
         $courses = Course::all();
@@ -134,7 +135,8 @@ class RoundController extends Controller
         $allStudents = Student::all();
         $days = Day::all();
         $roundDays = Round_day::where('round_id', $id)->get();
-        return view($this->viewName . 'view', compact('row', 'branches', 'rooms', 'courses','roundSS', 'trainers', 'students', 'allStudents', 'days','roundDays'));
+
+        return view($this->viewName . 'view', compact('row', 'branches', 'rooms', 'courses', 'roundSS', 'trainers', 'students', 'allStudents', 'days', 'roundDays'));
     }
 
     /**
@@ -184,37 +186,31 @@ class RoundController extends Controller
                     array_push($arr, $arrIndex);
                 }
 
-
-$days=[];
+                $days = [];
 
                 foreach ($arr as $key => $Day) {
 
                     array_push($days, $Day[0]);
 
-
-
                 }
 
-$row = Round::where('id', '=', $id)->first();
+                $row = Round::where('id', '=', $id)->first();
                 $row->days()->sync(array_values($days));
                 foreach ($arr as $key => $Day) {
 
-                $rr = Round_day::where('round_id', $id)->where('day_id', $Day[0])->first();
-                if($rr){
-                    if($Day[0]==$rr->day_id){
-                        if(!empty($Day[1])){
-                            $rr->from =$Day[1];
+                    $rr = Round_day::where('round_id', $id)->where('day_id', $Day[0])->first();
+                    if ($rr) {
+                        if ($Day[0] == $rr->day_id) {
+                            if (!empty($Day[1])) {
+                                $rr->from = $Day[1];
+                            }
+                            if (!empty($Day[2])) {
+                                $rr->to = $Day[2];
+                            }
+
+                            $rr->update();
                         }
-                        if(!empty($Day[2])){
-                            $rr->to =$Day[2];
-                        }
-
-
-
-                        $rr->update();
                     }
-                }
-
 
                 }
             }
@@ -251,5 +247,82 @@ $row = Round::where('id', '=', $id)->first();
 
             // return redirect()->back()->with('flash_danger', 'هذه القضية مربوطه بجدول اخر ..لا يمكن المسح');
         }
+    }
+
+    public function startRound(Request $request)
+    {
+        $row = Round::where('id', '=', $request->get('round_id'))->first();
+        //get number of course days
+        $course = Course::where('id', $row->course_id)->first();
+        $totalminutes = 0;
+        $noofDay = 0;
+        $days = [
+            'ww',
+            'Monday',
+            'Tuesday',
+            'Wednesday',
+            'Thursday',
+            'Friday',
+            'Saturday',
+            'Sunday',
+        ];
+        $startDay = Carbon::parse($row->start_date);
+        $courseDays = [];
+        array_push($courseDays, Carbon::parse($row->start_date));
+
+        $xx = $startDay->format('N');
+        while ($course->course_hours > 0) {
+
+            foreach (Round_day::where('round_id', $request->get('round_id'))->orderByRaw(DB::raw("FIELD(day_id, $xx)"))->get() as $index => $timer) {
+
+                $startTime = Carbon::parse($timer->from);
+                $endTime = Carbon::parse($timer->to);
+                $duration = $endTime->diffInMinutes($startTime);
+                $totalminutes = $duration;
+
+                $str = 'next ' . $days[$timer->day_id];
+
+                $noOfHourse = date('H:i', mktime(0, $totalminutes));
+                $course->course_hours = $course->course_hours - (int) $noOfHourse;
+                if (($course->course_hours / (int) $noOfHourse) >= 1 || ($course->course_hours % (int) $noOfHourse) > 0) {
+
+                    $str = 'next ' . $days[$timer->day_id];
+
+                    $startDay->modify($str);
+
+                    // Output
+
+                    $end_date = Carbon::parse($startDay->format('Y-m-d'));
+
+                    array_push($courseDays, $end_date);
+
+                }
+
+            }
+
+        }
+
+//update end Date
+        $row->update(['end_date' => $end_date]);
+        // dd(count($courseDays));
+        //sessions
+
+        $Counter = 1;
+
+            for ($x = 0; $x < count($courseDays); $x++) {
+
+                    $Session = new Session();
+                    $Session->round_id =  $request->get('round_id');
+                    $Session->session_no = $Counter;
+                    $Session->session_date = $courseDays[$x];
+                    $Session->is_done=0;
+                    $Session->is_cancel=0;
+                    $Session->save();
+
+                    $Counter++;
+                }
+
+                return redirect()->back()->with('flash_success', 'تم بدأ المجموعة !');
+
     }
 }

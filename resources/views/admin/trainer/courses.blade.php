@@ -29,9 +29,10 @@
                                         <td>{{$course->name}}</td>
                                         <td>{{$course->fees}}</td>
                                         <td>{{$course->course_hours ?? ''}}</td>
+
+                                        <td><img src="{{ asset('uploads/courses') }}/{{$course->image ?? ''}}" width="80" height="80" class="img-table"/></td>
                                         <td> <a  id="downloadCurrent" href="{{ asset('uploads/courses')}}/{{$course->pdf_file ?? ''}}" download="" class="btn btn-default"><i class="fa fa-download" title="download"></i>
                                             {{$course->pdf_file ?? ''}}</a></td>
-                                        <td><img src="{{ asset('uploads/courses') }}/{{$course->image ?? ''}}" width="80" height="80" class="img-table"/></td>
                                         <td>{{$course->category ?? ''}}</td>
                                         <td>{!! $course->note ?? ''!!}</td>
                                         <td>

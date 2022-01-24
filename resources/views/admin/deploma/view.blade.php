@@ -1,5 +1,5 @@
 @extends('layout.web')
-@section('title', ' الدورات')
+@section('title', ' الدبلومات')
 
 @section('content')
     <div class="row">
@@ -7,7 +7,7 @@
         <div class="col-md-10">
             <div class="box box-primary px-5">
                 <div class="box-header">
-                    <h3 class="box-title"> بيانات الدورة</h3>
+                    <h3 class="box-title"> بيانات الدبلومه</h3>
                 </div>
 
 

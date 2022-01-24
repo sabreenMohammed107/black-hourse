@@ -54,4 +54,7 @@ Route::resource('deploma-student', 'App\Http\Controllers\DeplomaStudentControlle
 Route::post('add-student-deploma', 'App\Http\Controllers\DeplomaStudentController@addStudent')->name('add-student-deploma');
 //course-deploma
 Route::resource('course-deploma', 'App\Http\Controllers\CourseDeplomaController');
+//start Round
+Route::post('start-round', 'App\Http\Controllers\RoundController@startRound')->name('start-round');
+
 
