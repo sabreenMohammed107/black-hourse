@@ -72,8 +72,8 @@
                  </a>
                  <ul class="treeview-menu">
 
-                     {{-- <li><a href="{{ route('size.index') }}"><i class="fa fa-circle-o"></i> المقاسات </a></li>
-            <li><a href="{{ route('color.index') }}"><i class="fa fa-circle-o"></i> الالوان </a></li>
+                     <li><a href="{{ route('current-groups.index') }}"><i class="fa fa-circle-o"></i> المجموعات الحالية </a></li>
+            {{-- <li><a href="{{ route('color.index') }}"><i class="fa fa-circle-o"></i> الالوان </a></li>
             <li><a href="{{ route('articles.index') }}"><i class="fa fa-circle-o"></i> المقالات </a></li> --}}
 
                  </ul>

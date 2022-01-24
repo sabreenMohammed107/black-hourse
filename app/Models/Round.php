@@ -13,6 +13,7 @@ class Round extends Model
         'branch_id',
         'room_id',
         'trainer_id',
+        'status_id',
         'round_no',
         'start_date',
         'end_date',

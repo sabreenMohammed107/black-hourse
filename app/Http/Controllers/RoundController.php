@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Attendance;
 use App\Models\Branch;
 use App\Models\Course;
 use App\Models\Day;
@@ -309,20 +310,38 @@ class RoundController extends Controller
 
         $Counter = 1;
 
-            for ($x = 0; $x < count($courseDays); $x++) {
+        for ($x = 0; $x < count($courseDays); $x++) {
 
-                    $Session = new Session();
-                    $Session->round_id =  $request->get('round_id');
-                    $Session->session_no = $Counter;
-                    $Session->session_date = $courseDays[$x];
-                    $Session->is_done=0;
-                    $Session->is_cancel=0;
-                    $Session->save();
+            $Session = new Session();
+            $Session->round_id = $request->get('round_id');
+            $Session->session_no = $Counter;
+            $Session->session_date = $courseDays[$x];
+            $Session->is_done = 0;
+            $Session->is_cancel = 0;
+            $Session->save();
 
-                    $Counter++;
-                }
+            $Counter++;
+        }
 
-                return redirect()->back()->with('flash_success', 'تم بدأ المجموعة !');
+        //attendance
+        $students = Student_round::where('round_id', $request->get('round_id'))->pluck('student_id');
+        $sessions = Session::where('round_id', $request->get('round_id'))->pluck('id');
+
+        foreach ($sessions as $session) {
+            foreach ($students as $stuent) {
+                $attendance = new Attendance();
+                $attendance->session_id = $session;
+                $attendance->student_round_id = $stuent;
+                $attendance->is_atend = 0;
+                $attendance->room_rent_fees = 0;
+                $attendance->room_rent_paid = 0;
+                $attendance->certificate_fees = 0;
+                $attendance->certificate_paid = 0;
+                $attendance->save();
+            }
+
+        }
+        return redirect()->back()->with('flash_success', 'تم بدأ المجموعة !');
 
     }
 }

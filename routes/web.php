@@ -30,6 +30,9 @@ Route::resource('branch', 'App\Http\Controllers\BranchController');
 Route::resource('room', 'App\Http\Controllers\RoomController');
 //round
 Route::resource('round', 'App\Http\Controllers\RoundController');
+//start Round
+Route::post('start-round', 'App\Http\Controllers\RoundController@startRound')->name('start-round');
+
 //course
 Route::resource('course', 'App\Http\Controllers\CourseController');
 //trainer
@@ -54,7 +57,7 @@ Route::resource('deploma-student', 'App\Http\Controllers\DeplomaStudentControlle
 Route::post('add-student-deploma', 'App\Http\Controllers\DeplomaStudentController@addStudent')->name('add-student-deploma');
 //course-deploma
 Route::resource('course-deploma', 'App\Http\Controllers\CourseDeplomaController');
-//start Round
-Route::post('start-round', 'App\Http\Controllers\RoundController@startRound')->name('start-round');
 
+//current-groups
 
+Route::resource('current-groups', 'App\Http\Controllers\CurrentGroupsController');
