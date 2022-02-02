@@ -62,9 +62,6 @@ class DeplomaController extends Controller
     public function store(Request $request)
     {
         $input = $request->except(['_token']);
-
-
-
         Deploma::create($input);
         return redirect()->route($this->routeName.'index')->with('flash_success', 'تم الحفظ بنجاح');
     }

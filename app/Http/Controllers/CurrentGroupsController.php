@@ -2,11 +2,20 @@
 
 namespace App\Http\Controllers;
 
-use Carbon\Carbon;
+use App\Models\Branch;
+use App\Models\Course;
+use App\Models\Exeption;
+use App\Models\Exeption_type;
+use App\Models\Followup_center;
+use App\Models\Followup_type;
+use App\Models\Room;
+use App\Models\Round;
+use App\Models\Round_day;
+use App\Models\Student_round;
+use App\Models\Trainer;
 use Illuminate\Database\QueryException;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
-use App\Models\Round;
+
 class CurrentGroupsController extends Controller
 {
 
@@ -37,7 +46,7 @@ class CurrentGroupsController extends Controller
      */
     public function index()
     {
-        $rows = Round::where('status_id', '=',2)->orderBy("created_at", "Desc")->get();
+        $rows = Round::where('status_id', '=', 2)->orderBy("created_at", "Desc")->get();
 
         return view($this->viewName . 'index', compact('rows'));
     }
@@ -60,7 +69,10 @@ class CurrentGroupsController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $input = $request->except(['_token']);
+        $input['exeption_status'] = 0;
+        Exeption::create($input);
+        return redirect()->route($this->routeName . 'show', $request->get('round_id'))->with('flash_success', 'تم الحفظ بنجاح');
     }
 
     /**
@@ -71,7 +83,20 @@ class CurrentGroupsController extends Controller
      */
     public function show($id)
     {
-        //
+        $row = Round::where('id', '=', $id)->first();
+        $roundSS = Round::where('id', '=', $id)->first();
+        $branches = Branch::all();
+        $rooms = Room::all();
+        $courses = Course::all();
+        $trainers = Trainer::all();
+        $students = Student_round::where('round_id', $id)->get();
+        $roundDays = Round_day::where('round_id', $id)->get();
+        $exeptions = Exeption::where('round_id', $id)->get();
+        $exeptionTypes = Exeption_type::all();
+        $followups = Followup_center::where('round_id', $id)->where('followup_flag', 2)->get();
+        $fullowupTypes=Followup_type::all();
+        return view($this->viewName . 'view', compact('row', 'branches', 'rooms', 'courses', 'roundSS', 'trainers', 'students', 'roundDays', 'exeptions', 'exeptionTypes', 'followups','fullowupTypes'));
+
     }
 
     /**
@@ -94,7 +119,9 @@ class CurrentGroupsController extends Controller
      */
     public function update(Request $request, $id)
     {
-        //
+        $input = $request->except(['_token']);
+        $this->object::findOrFail($id)->update($input);
+        return redirect()->route($this->routeName . 'show', $request->get('round_id'))->with('flash_success', 'تم الحفظ بنجاح');
     }
 
     /**
@@ -105,6 +132,37 @@ class CurrentGroupsController extends Controller
      */
     public function destroy($id)
     {
-        //
+        $row = Exeption::where('id', $id)->first();
+        // Delete File ..
+        try {
+
+            $row->delete();
+            return redirect()->back()->with('flash_success', 'تم الحذف بنجاح !');
+
+        } catch (QueryException $q) {
+            return redirect()->back()->withInput()->with('flash_danger', $q->getMessage());
+
+            // return redirect()->back()->with('flash_danger', 'هذه القضية مربوطه بجدول اخر ..لا يمكن المسح');
+        }
+    }
+    public function acceptExeptions()
+    {
+        $exeptions = Exeption::get();
+        return view($this->viewName . 'acceptExeptions', compact('exeptions'));
+    }
+
+    public function accept($id)
+    {
+        $row = Exeption::where('id', $id)->first();
+        $row->update(['exeption_status' => 1]);
+        return redirect()->back()->with('flash_success', 'تم الحذف بنجاح !');
+
+    }
+
+    public function reject($id)
+    {
+        $row = Exeption::where('id', $id)->first();
+        $row->update(['exeption_status' => 2]);
+        return redirect()->back()->with('flash_success', 'تم الحذف بنجاح !');
     }
 }

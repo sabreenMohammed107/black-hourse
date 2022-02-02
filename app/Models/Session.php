@@ -16,4 +16,7 @@ class Session extends Model
     'is_cancel',
     'notes',
     ];
+    public function round(){
+        return $this->belongsTo('App\Models\Round', 'round_id');
+    }
 }

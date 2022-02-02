@@ -18,4 +18,8 @@ class Round_day extends Model
     public function day(){
         return $this->belongsTo('App\Models\Day', 'day_id');
     }
+
+    public function round(){
+        return $this->belongsTo('App\Models\Round', 'round_id');
+    }
 }

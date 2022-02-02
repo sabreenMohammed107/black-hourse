@@ -26,4 +26,8 @@ class Student_round extends Model
     public function round(){
         return $this->belongsTo('App\Models\Round', 'round_id');
     }
+
+    public function attend(){
+        return $this->hasMany('App\Models\Attendance', 'student_round_id','id');
+    }
 }

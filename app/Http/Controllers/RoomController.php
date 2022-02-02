@@ -4,13 +4,18 @@ namespace App\Http\Controllers;
 
 use App\Models\Branch;
 use App\Models\Room;
-use Illuminate\Http\Request;
+use App\Models\Round;
+use App\Models\Round_day;
+use Carbon\Carbon;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\QueryException;
+use Illuminate\Http\Request;
+
 class RoomController extends Controller
 {
     protected $object;
     protected $viewName;
-    protected $routeName ;
+    protected $routeName;
 
     /**
      * UserController Constructor.
@@ -26,7 +31,7 @@ class RoomController extends Controller
         // $this->middleware('permission:users-delete', ['only' => ['destroy']]);
         $this->object = $object;
         $this->viewName = 'admin.room.';
-    $this->routeName = 'room.';
+        $this->routeName = 'room.';
     }
     /**
      * Display a listing of the resource.
@@ -35,8 +40,8 @@ class RoomController extends Controller
      */
     public function index()
     {
-        $rows=Room::orderBy("created_at", "Desc")->get();
-        return view($this->viewName.'index', compact('rows'));
+        $rows = Room::orderBy("created_at", "Desc")->get();
+        return view($this->viewName . 'index', compact('rows'));
     }
 
     /**
@@ -46,8 +51,8 @@ class RoomController extends Controller
      */
     public function create()
     {
-        $branches=Branch::all();
-        return view($this->viewName . 'add',compact('branches'));
+        $branches = Branch::all();
+        return view($this->viewName . 'add', compact('branches'));
     }
 
     /**
@@ -61,10 +66,8 @@ class RoomController extends Controller
 
         $input = $request->except(['_token']);
 
-
-
-    Room::create($input);
-    return redirect()->route($this->routeName.'index')->with('flash_success', 'تم الحفظ بنجاح');
+        Room::create($input);
+        return redirect()->route($this->routeName . 'index')->with('flash_success', 'تم الحفظ بنجاح');
 
     }
 
@@ -77,10 +80,80 @@ class RoomController extends Controller
     public function show($id)
     {
         $row = Room::where('id', '=', $id)->first();
-        $branches=Branch::all();
-        return view($this->viewName . 'view', compact('row','branches'));
-    }
+        $branches = Branch::all();
+        //data to calender
+        $data = array();
+        $sessions = $row->sessions;
+        $rows = $row->days;
 
+
+        foreach ($sessions as $session) {
+
+            $day = Round_day::where('round_id', $session->round_id)->get();
+
+            foreach ($day as $value) {
+                if(Carbon::parse($session->session_date)->dayOfWeek == $value->day_id){
+                    array_push($data,
+                    ['title' => $value->round->course->name,
+                        'start' => Carbon::parse(date('Y-m-d', strtotime($session->session_date)) . ' ' . $value->from , 'GMT')->subHours(2), // 1975-05-21 22:00:00
+                        'end' => Carbon::parse(date('Y-m-d', strtotime($session->session_date)) . ' ' . $value->to , 'GMT')->subHours(2),
+                        'backgroundColor' => '#f56954', //red
+                        'borderColor' => '#f56954', //red
+                        'allDay' => false]);
+                }
+
+
+            }
+
+
+        }
+
+        $data = json_encode($data);
+
+        return view($this->viewName . 'view1', compact('row', 'branches', 'data'));
+    }
+    public function fullCalender(Request $request)
+    {
+        $data = [];
+
+        // if ($request->ajax()) {
+        $rows = Round_day::all();
+        foreach ($rows as $key => $value) {
+
+            // $date = Carbon::createFromFormat('Y-m-d H', date('Y-m-d', strtotime($value->round->start_date)).' '.$value->from)->toDateTimeString();
+            // $endDate =Carbon::createFromFormat('Y-m-d H', date('Y-m-d', strtotime($value->round->start_date)).' '.$value->to)->toDateTimeString();
+
+            $obj = new Collection();
+            $obj->title = $value->round_id;
+            $obj->start = 'Sat Jan 29 2022 22:41:49'; // 1975-05-21 22:00:00
+            $obj->end = 'Sat Jan 29 2022 22:41:49';
+            $obj->backgroundColor = '#f56954'; //red
+            $obj->borderColor = '#f56954'; //red
+            $obj->allDay = true;
+
+            // {
+            //       id             : 10,
+            //       title          : 'محجوز تدريب',
+            //       start          : new Date(y, m, d - 9),
+            //       end            : new Date(y, m, d - 9),
+            //       backgroundColor: '#f56954', //red
+            //       borderColor    : '#f56954', //red
+            //       allDay         : true
+            //     }
+            array_push($data, ['title' => $value->round_id,
+                'start' => 'Sat Jan 29 2022 22:41:49', // 1975-05-21 22:00:00
+                'end' => 'Sat Jan 29 2022 22:41:49',
+                'backgroundColor' => '#f56954', //red
+                'borderColor' => '#f56954', //red
+                'allDay' => true]);
+        }
+
+        \Log::info($data);
+        return response()->json($data);
+        // return json_encode($data);
+        // }
+
+    }
     /**
      * Show the form for editing the specified resource.
      *
@@ -90,8 +163,8 @@ class RoomController extends Controller
     public function edit($id)
     {
         $row = Room::where('id', '=', $id)->first();
-        $branches=Branch::all();
-        return view($this->viewName . 'edit', compact('row','branches'));
+        $branches = Branch::all();
+        return view($this->viewName . 'edit', compact('row', 'branches'));
     }
 
     /**
@@ -105,9 +178,8 @@ class RoomController extends Controller
     {
         $input = $request->except(['_token']);
 
-
-    $this->object::findOrFail($id)->update($input);
-return redirect()->route($this->routeName.'index')->with('flash_success', 'تم الحفظ بنجاح');
+        $this->object::findOrFail($id)->update($input);
+        return redirect()->route($this->routeName . 'index')->with('flash_success', 'تم الحفظ بنجاح');
 
     }
 
@@ -119,7 +191,7 @@ return redirect()->route($this->routeName.'index')->with('flash_success', 'تم 
      */
     public function destroy($id)
     {
-        $row=Room::where('id',$id)->first();
+        $row = Room::where('id', $id)->first();
         // Delete File ..
 
         try {

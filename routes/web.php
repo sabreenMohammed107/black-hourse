@@ -28,6 +28,8 @@ Route::resource('company', 'App\Http\Controllers\CompanyController');
 Route::resource('branch', 'App\Http\Controllers\BranchController');
 //room
 Route::resource('room', 'App\Http\Controllers\RoomController');
+Route::get('/room/1/full-calender', 'App\Http\Controllers\RoomController@fullCalender')->name('room/1/full-calender');
+
 //round
 Route::resource('round', 'App\Http\Controllers\RoundController');
 //start Round
@@ -61,3 +63,19 @@ Route::resource('course-deploma', 'App\Http\Controllers\CourseDeplomaController'
 //current-groups
 
 Route::resource('current-groups', 'App\Http\Controllers\CurrentGroupsController');
+//accept-exeptions
+Route::get('accept-exeptions', 'App\Http\Controllers\CurrentGroupsController@acceptExeptions')->name('accept-exeptions');
+Route::post('exeption-accept\{id}', 'App\Http\Controllers\CurrentGroupsController@accept')->name('exeption-accept');
+Route::post('exeption-reject\{id}', 'App\Http\Controllers\CurrentGroupsController@reject')->name('exeption-reject');
+//fullowup
+
+Route::resource('fullowup', 'App\Http\Controllers\FollowupController');
+Route::resource('callcenter', 'App\Http\Controllers\CallCenterController');
+//general-students
+
+Route::resource('general-students', 'App\Http\Controllers\GeneralStudentsController');
+
+//attendance
+
+Route::resource('attendance', 'App\Http\Controllers\AttendanceController');
+

@@ -45,8 +45,8 @@
                      {{-- <span class="label label-primary pull-right">4</span> --}}
                  </a>
                  <ul class="treeview-menu">
-                    <li><a href="{{ route('company.index') }}"><i class="fa fa-circle-o"></i> الشركات </a></li>
-                    <li><a href="{{ route('branch.index') }}"><i class="fa fa-circle-o"></i> الفروع </a></li>
+                     <li><a href="{{ route('company.index') }}"><i class="fa fa-circle-o"></i> الشركات </a></li>
+                     <li><a href="{{ route('branch.index') }}"><i class="fa fa-circle-o"></i> الفروع </a></li>
 
                      <li><a href="{{ route('users.index') }}"><i class="fa fa-circle-o"></i> المستخدمين </a></li>
                      <li><a href="{{ route('roles.index') }}"><i class="fa fa-circle-o"></i> الأدوار </a></li>
@@ -72,9 +72,15 @@
                  </a>
                  <ul class="treeview-menu">
 
-                     <li><a href="{{ route('current-groups.index') }}"><i class="fa fa-circle-o"></i> المجموعات الحالية </a></li>
-            {{-- <li><a href="{{ route('color.index') }}"><i class="fa fa-circle-o"></i> الالوان </a></li>
-            <li><a href="{{ route('articles.index') }}"><i class="fa fa-circle-o"></i> المقالات </a></li> --}}
+                     <li><a href="{{ route('current-groups.index') }}"><i class="fa fa-circle-o"></i> المجموعات
+                             الحالية </a></li>
+                             <li><a href="{{ route('general-students.index') }}"><i class="fa fa-circle-o"></i> الطلاب </a></li>
+                             <li><a href="#"><i class="fa fa-circle-o"></i> الجدول اليومي </a></li>
+                             <li><a href="{{ route('attendance.index') }}"><i class="fa fa-circle-o"></i> الحضور </a></li>
+
+
+                     <li><a href="{{ route('accept-exeptions') }}"><i class="fa fa-circle-o"></i> الموافقة على
+                             الاستثناءات </a></li>
 
                  </ul>
              </li>

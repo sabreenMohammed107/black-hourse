@@ -252,6 +252,10 @@ class RoundController extends Controller
 
     public function startRound(Request $request)
     {
+        try
+        {
+            // Disable foreign key checks!
+            DB::statement('SET FOREIGN_KEY_CHECKS=0;');
         $row = Round::where('id', '=', $request->get('round_id'))->first();
         //get number of course days
         $course = Course::where('id', $row->course_id)->first();
@@ -304,7 +308,7 @@ class RoundController extends Controller
         }
 
 //update end Date
-        $row->update(['end_date' => $end_date]);
+        $row->update(['end_date' => $end_date,'status_id'=>2]);
         // dd(count($courseDays));
         //sessions
 
@@ -324,7 +328,7 @@ class RoundController extends Controller
         }
 
         //attendance
-        $students = Student_round::where('round_id', $request->get('round_id'))->pluck('student_id');
+        $students = Student_round::where('round_id', $request->get('round_id'))->pluck('id');
         $sessions = Session::where('round_id', $request->get('round_id'))->pluck('id');
 
         foreach ($sessions as $session) {
@@ -341,7 +345,14 @@ class RoundController extends Controller
             }
 
         }
-        return redirect()->back()->with('flash_success', 'تم بدأ المجموعة !');
+        DB::commit();
+        // Enable foreign key checks!
+        DB::statement('SET FOREIGN_KEY_CHECKS=1;');
+        return redirect()->route($this->routeName . 'index')->with('flash_success', 'تم الحفظ بنجاح');
+    } catch (\Throwable $e) {
+        DB::rollback();
 
+        return redirect()->back()->withInput()->with('flash_success', $e->getMessage());
+    }
     }
 }

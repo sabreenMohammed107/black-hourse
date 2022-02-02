@@ -18,4 +18,8 @@ class Attendance extends Model
         'certificate_paid',
         'notes',
     ];
+    public function studentRound(){
+        return $this->belongsTo('App\Models\Student_round', 'student_round_id');
+    }
+
 }

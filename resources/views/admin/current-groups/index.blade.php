@@ -47,13 +47,13 @@
                         <td>{!!$row->course->note ?? ''!!}</td>
                         <td>
                             <div class="btn-group">
-                                <a href="#" class="btn btn-default"><i
+                                <a href="{{ route('current-groups.show', $row->id) }}" class="btn btn-default"><i
                                     class="fa fa-eye" title="عرض"></i></a>
                                                 </div>
                         </td>
                           <!-- Delete Modal -->
 
-            </div>
+
                     </tr>
 
                     @endforeach
