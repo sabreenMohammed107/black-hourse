@@ -25,13 +25,14 @@
                             <th>اسم المستخدم</th>
                             <th>البريد الالكتروني </th>
                             <th>العنوان </th>
-                            {{-- <th>الحالة</th> --}}
+                            <th>الفرع</th>
                             <th>الدور</th>
                             <th>الاجراءات</th>
                         </tr>
                     </thead>
                     <tbody>
                         @foreach ($data as $index => $row)
+
                             <tr>
                                 <td></td>
                                 <td>{{ $index + 1 }}</td>
@@ -39,6 +40,25 @@
                                 <td>{{ $row->name }}</td>
                                 <td>{{ $row->email }}</td>
                                 <td>{{ $row->address }}</td>
+                                <td>
+                                    <?php
+                                    foreach ($row->branches as $key => $value) {
+                                        # code...
+                                        ?>
+                                        <label class="badge badge-primary">
+                                            <?php echo $value->name;?>
+                                            </label>
+
+                                            <?php
+                                            }
+
+                                    ?>
+                                    {{-- @if (!empty($row->branches())) --}}
+                                    {{-- @foreach ($row->branches() as $v)
+                                        <label class="badge badge-primary">{{ $v ?? '' }}</label>
+                                    @endforeach --}}
+                                {{-- @endif --}}
+                            </td>
                                 <td>
                                     @if (!empty($row->getRoleNames()))
                                         @foreach ($row->getRoleNames() as $v)

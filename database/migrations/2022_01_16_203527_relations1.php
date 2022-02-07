@@ -13,9 +13,10 @@ class Relations1 extends Migration
      */
     public function up()
     {
-        //  This is Realations for the users Table ..
-        Schema::table('users', function (Blueprint $table) {
+        //  This is Realations for the users_branches Table ..
+        Schema::table('users_branches', function (Blueprint $table) {
             $table->foreign('branch_id')->references('id')->on('branches');
+            $table->foreign('user_id')->references('id')->on('users');
 
         });
 

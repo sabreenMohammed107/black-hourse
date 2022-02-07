@@ -78,7 +78,6 @@
                              <li><a href="#"><i class="fa fa-circle-o"></i> الجدول اليومي </a></li>
                              <li><a href="{{ route('attendance.index') }}"><i class="fa fa-circle-o"></i> الحضور </a></li>
 
-
                      <li><a href="{{ route('accept-exeptions') }}"><i class="fa fa-circle-o"></i> الموافقة على
                              الاستثناءات </a></li>
 
@@ -114,6 +113,9 @@
                      <i class="fa fa-angle-left pull-right"></i>
                  </a>
                  <ul class="treeview-menu">
+                    <li><a href="{{ route('cashbox.index') }}"><i class="fa fa-circle-o"></i> الخزن </a></li>
+                    <li><a href="{{ route('invoice.index') }}"><i class="fa fa-circle-o"></i> الفواتير </a></li>
+
                      {{-- <li><a href="{{ route('admin-slider.index') }}"><i class="fa fa-circle-o"></i>  الصور الرئيسيه </a></li> --}}
 
                  </ul>

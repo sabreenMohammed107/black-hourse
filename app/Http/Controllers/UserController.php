@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Branch;
 use Illuminate\Http\Request;
 use Spatie\Permission\Models\Role;
 use App\Models\User;
@@ -16,8 +17,8 @@ class UserController extends Controller
 
     // This is for General Class Variables.
     protected $model;
-    protected $view = 'admin.users.';
-    protected $route = "users.";
+    protected $view;
+    protected $route;
 
     /**
      * UserController Constructor.
@@ -32,6 +33,8 @@ class UserController extends Controller
         // $this->middleware('permission:users-edit', ['only' => ['edit','update']]);
         // $this->middleware('permission:users-delete', ['only' => ['destroy']]);
         $this->model = $model;
+        $this->view = 'admin.users.';
+        $this->route = 'users.';
     }
 
 
@@ -56,8 +59,9 @@ class UserController extends Controller
     public function create()
     {
         $roles = Role::pluck('name','name')->all();
+        $branches = Branch::pluck('name','id')->all();
 
-        return view($this->view.'add', compact('roles'));
+        return view($this->view.'add', compact('roles','branches'));
     }
 
     /**
@@ -69,35 +73,34 @@ class UserController extends Controller
     public function store(Request $request)
     {
         // Validating fields
-        $this->validate($request, [
-            'f_name' => 'required',
-            'l_name' => 'required',
-            'email' => 'required|email|unique:users',
-            'phone' => 'required|unique:users',
-            'username' => 'required|unique:users',
-            'password' => 'required',
-            'roles' => 'required',
-        ],
-        [
-            'f_name.required' => 'حقل الاسم الاول مطلوب',
-            'l_name.required' => 'حقل الاسم الاخير مطلوب',
-            'username.required' => 'حقل اسم المستخدم مطلوب',
-            'phone.required' => 'حقل التليفون مطلوب',
-            'email.required' => 'حقل البريد الالكترونى مطلوب',
-            'password.required' => 'حقل كلمه السر مطلوب',
-            'roles.required' => 'حقل الادوار مطلوب',
-            'email.unique' => 'البريد الالكترونى  موجود بالفعل',
-            'phone.unique' => 'التليفون موجود بالفعل',
-            'username.unique' => 'اسم المستخدم موجود بالفعل',
-        ]);
+        // $this->validate($request, [
+        //     'f_name' => 'required',
+        //     'l_name' => 'required',
+        //     'email' => 'required|email|unique:users',
+        //     'phone' => 'required|unique:users',
+        //     'username' => 'required|unique:users',
+        //     'password' => 'required',
+        //     'roles' => 'required',
+        // ],
+        // [
+        //     'f_name.required' => 'حقل الاسم الاول مطلوب',
+        //     'l_name.required' => 'حقل الاسم الاخير مطلوب',
+        //     'username.required' => 'حقل اسم المستخدم مطلوب',
+        //     'phone.required' => 'حقل التليفون مطلوب',
+        //     'email.required' => 'حقل البريد الالكترونى مطلوب',
+        //     'password.required' => 'حقل كلمه السر مطلوب',
+        //     'roles.required' => 'حقل الادوار مطلوب',
+        //     'email.unique' => 'البريد الالكترونى  موجود بالفعل',
+        //     'phone.unique' => 'التليفون موجود بالفعل',
+        //     'username.unique' => 'اسم المستخدم موجود بالفعل',
+        // ]);
 
         try {
-
             $input = $request->all();
             $input['password'] = \Hash::make($input['password']);
-
             $user = $this->model::create($input);
             $user->assignRole($request->input('roles'));
+            $user->branches()->attach($request->input('branches'));
 
             // Display a successful message ...
             return redirect()->route($this->route.'index')->with('flash_success','تم إنشاء المستخدم بنجاح');
@@ -132,8 +135,9 @@ class UserController extends Controller
         $user->password = null;
         $roles = Role::pluck('name','name')->all();
         $userRole = $user->roles->pluck('name','name')->all();
-
-        return view($this->view.'edit', compact('user', 'roles', 'userRole'));
+        $branches = Branch::pluck('name','id')->all();
+        $userBranch = $user->branches->pluck('name','name')->all();
+        return view($this->view.'edit', compact('user', 'roles', 'userRole','branches','userBranch'));
     }
 
     /**
@@ -147,27 +151,27 @@ class UserController extends Controller
     {
 
         // Validating fields
-        $this->validate($request, [
-            'f_name' => 'required',
-            'l_name' => 'required',
-            'email' => 'required|email|unique:users,email,'.$id,
-            'phone' => 'required|unique:users,phone,'.$id,
-            'username' => 'required|string|unique:users,username,'.$id,
+        // $this->validate($request, [
+        //     'f_name' => 'required',
+        //     'l_name' => 'required',
+        //     'email' => 'required|email|unique:users,email,'.$id,
+        //     'phone' => 'required|unique:users,phone,'.$id,
+        //     'username' => 'required|string|unique:users,username,'.$id,
 
-            'roles' => 'required',
-        ],
-        [
-            'f_name.required' => 'حقل الاسم الاول مطلوب',
-            'l_name.required' => 'حقل الاسم الاخير مطلوب',
-            'username.required' => 'حقل اسم المستخدم مطلوب',
-            'phone.required' => 'حقل التليفون مطلوب',
-            'email.required' => 'حقل البريد الالكترونى مطلوب',
+        //     'roles' => 'required',
+        // ],
+        // [
+        //     'f_name.required' => 'حقل الاسم الاول مطلوب',
+        //     'l_name.required' => 'حقل الاسم الاخير مطلوب',
+        //     'username.required' => 'حقل اسم المستخدم مطلوب',
+        //     'phone.required' => 'حقل التليفون مطلوب',
+        //     'email.required' => 'حقل البريد الالكترونى مطلوب',
 
-            'roles.required' => 'حقل الادوار مطلوب',
-            'email.unique' => 'البريد الالكترونى  موجود بالفعل',
-            'phone.unique' => 'التليفون موجود بالفعل',
-            'username.unique' => 'اسم المستخدم موجود بالفعل',
-        ]);
+        //     'roles.required' => 'حقل الادوار مطلوب',
+        //     'email.unique' => 'البريد الالكترونى  موجود بالفعل',
+        //     'phone.unique' => 'التليفون موجود بالفعل',
+        //     'username.unique' => 'اسم المستخدم موجود بالفعل',
+        // ]);
         try {
 
             $input = $request->all();
@@ -181,7 +185,7 @@ class UserController extends Controller
 
             \DB::table('model_has_roles')->where('model_id',$id)->delete();
             $user->assignRole($request->input('roles'));
-
+            $user->branches()->sync($request->input('branches'));
             // Display a successful message ...
             return redirect()->route($this->route.'index')->with('flash_success','تم تعديل بيانات المستخدم بنجاح');
 

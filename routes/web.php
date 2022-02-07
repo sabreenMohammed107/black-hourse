@@ -78,4 +78,11 @@ Route::resource('general-students', 'App\Http\Controllers\GeneralStudentsControl
 //attendance
 
 Route::resource('attendance', 'App\Http\Controllers\AttendanceController');
+//Finance
+//cashbox
+Route::resource('cashbox', 'App\Http\Controllers\CashboxController');
+
+//invoice
+Route::resource('invoice', 'App\Http\Controllers\InvoiceController');
+Route::get('dynamicBranch/fetch', 'App\Http\Controllers\InvoiceController@fetchBranch')->name('dynamicBranch.fetch');
 

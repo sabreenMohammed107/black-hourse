@@ -92,21 +92,36 @@ class RoomController extends Controller
             $day = Round_day::where('round_id', $session->round_id)->get();
 
             foreach ($day as $value) {
-                if(Carbon::parse($session->session_date)->dayOfWeek == $value->day_id){
+
+                 if(Carbon::parse($session->session_date)->dayOfWeek == $value->day_id){
+
                     array_push($data,
                     ['title' => $value->round->course->name,
                         'start' => Carbon::parse(date('Y-m-d', strtotime($session->session_date)) . ' ' . $value->from , 'GMT')->subHours(2), // 1975-05-21 22:00:00
                         'end' => Carbon::parse(date('Y-m-d', strtotime($session->session_date)) . ' ' . $value->to , 'GMT')->subHours(2),
                         'backgroundColor' => '#f56954', //red
                         'borderColor' => '#f56954', //red
-                        'allDay' => false]);
+                        'allDay' => false,
+                    ]);
                 }
 
 
+
+
+             if(Carbon::parse($session->session_date)->dayOfWeek==0 && $value->day_id==7){
+                array_push($data,
+                ['title' => $value->round->course->name,
+                    'start' => Carbon::parse(date('Y-m-d', strtotime($session->session_date)) . ' ' . $value->from , 'GMT')->subHours(2), // 1975-05-21 22:00:00
+                    'end' => Carbon::parse(date('Y-m-d', strtotime($session->session_date)) . ' ' . $value->to , 'GMT')->subHours(2),
+                    'backgroundColor' => '#f56954', //red
+                    'borderColor' => '#f56954', //red
+                    'allDay' => false,
+               ]);
+             }
             }
 
-
         }
+        //  dd($data);
 
         $data = json_encode($data);
 
@@ -120,8 +135,6 @@ class RoomController extends Controller
         $rows = Round_day::all();
         foreach ($rows as $key => $value) {
 
-            // $date = Carbon::createFromFormat('Y-m-d H', date('Y-m-d', strtotime($value->round->start_date)).' '.$value->from)->toDateTimeString();
-            // $endDate =Carbon::createFromFormat('Y-m-d H', date('Y-m-d', strtotime($value->round->start_date)).' '.$value->to)->toDateTimeString();
 
             $obj = new Collection();
             $obj->title = $value->round_id;
@@ -131,15 +144,6 @@ class RoomController extends Controller
             $obj->borderColor = '#f56954'; //red
             $obj->allDay = true;
 
-            // {
-            //       id             : 10,
-            //       title          : 'محجوز تدريب',
-            //       start          : new Date(y, m, d - 9),
-            //       end            : new Date(y, m, d - 9),
-            //       backgroundColor: '#f56954', //red
-            //       borderColor    : '#f56954', //red
-            //       allDay         : true
-            //     }
             array_push($data, ['title' => $value->round_id,
                 'start' => 'Sat Jan 29 2022 22:41:49', // 1975-05-21 22:00:00
                 'end' => 'Sat Jan 29 2022 22:41:49',
@@ -150,8 +154,7 @@ class RoomController extends Controller
 
         \Log::info($data);
         return response()->json($data);
-        // return json_encode($data);
-        // }
+
 
     }
     /**

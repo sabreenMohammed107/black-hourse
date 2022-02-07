@@ -57,6 +57,12 @@
             {{-- {!! Form::select('roles[]', $roles,[], array('class' => 'form-control','multiple')) !!} --}}
         </div>
     </div>
+    <div class="col-xs-6 col-sm-6 col-md-6">
+        <div class="form-group">
+            <strong>الفروع:</strong>
+            {!! Form::select('branches[]', $branches,$userBranch, array('class' => 'form-control','multiple')) !!}
+        </div>
+    </div>
     <div class="col-xs-6 col-sm-6 col-md-6 text-center">
         <button type="submit" class="btn btn-primary">حفظ</button>
         <a href="{{route('users.index')}}" class="btn btn-danger">إلغاء</a>

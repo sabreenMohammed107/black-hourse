@@ -33,7 +33,7 @@ class CreateAdminUserSeeder extends Seeder
 
         $user->assignRole([$role->id]);
 
-         $user->update(['branch_id'=>1]);
+        //  $user->update(['branch_id'=>1]);
 
     }
 }

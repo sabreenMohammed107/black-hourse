@@ -27,4 +27,7 @@ class Course extends Model
     public function deploma(){
         return $this->belongsToMany('App\Models\Deploma', 'deploma_courses','course_id','deploma_id');
     }
+
+
+
 }
