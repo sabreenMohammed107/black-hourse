@@ -23,7 +23,7 @@
                                     <th> اسم الطالب</th>
                                     <th>تاريخ الفاتورة </th>
                                     <th> نوع الدفع </th>
-                                    <th>الفرع</th>
+                                    <th>الخزنة</th>
                                     <th>اسم الدورة</th>
                                     <th>رقم المجموعة</th>
                                     <th>المبلغ المطلوب </th>
@@ -38,16 +38,16 @@
                                 <tr>
                                     <td></td>
                                     <td>{{ $index + 1 }}</td>
-                                    <td>520/321</td>
-                                    <td>علي عبدالحميد</td>
-                                    <td>2021-05-21</td>
-                                    <td>حجز دورة</td>
-                                    <td>فرع الدقي</td>
-                                    <td>جرافيك</td>
-                                    <td>2021-A105</td>
-                                    <td>250</td>
-                                    <td>150</td>
-                                    <td>100</td>
+                                    <td>{{$row->invoice_no}}</td>
+                                    <td>{{$row->student->name ?? ''}}</td>
+                                    <td>{{date('d-m-Y', strtotime($row->invoice_date))}}</td>
+                                    <td>{{$row->type->payment_type ?? ''}}</td>
+                                    <td>{{$row->cashbox->name ?? ''}}</td>
+                                    <td>{{$row->round->course->name ?? ''}}</td>
+                                    <td>{{$row->round->round_no ?? ''}}</td>
+                                    <td>{{$row->total_required_fees}}</td>
+                                    <td>{{$row->total_paid_before}}</td>
+                                    <td>{{$row->total_fees_new}}</td>
                                     <td>
                                         <div class="btn-group">
                                             <a href="{{ route('invoice.edit', $row->id) }}" class="btn btn-default"><i class="fa fa-edit" title="تعديل"></i></a>

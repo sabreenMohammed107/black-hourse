@@ -21,4 +21,8 @@ class Branch extends Model
     public function trainer(){
         return $this->belongsToMany('App\Models\Trainer', 'trainer_branches','branch_id','trainer_id');
     }
+
+    public function cashbox(){
+        return $this->hasMany('App\Models\Cashbox', 'branch_id','id');
+    }
 }

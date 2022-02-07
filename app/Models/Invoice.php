@@ -31,6 +31,11 @@ class Invoice extends Model
         return $this->belongsTo('App\Models\Round', 'round_id');
 
     }
+
+    public function student(){
+        return $this->belongsTo('App\Models\Student', 'student_id');
+
+    }
     public function user(){
         return $this->belongsTo('App\Models\User', 'user_id');
     }

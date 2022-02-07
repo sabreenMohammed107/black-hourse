@@ -84,5 +84,7 @@ Route::resource('cashbox', 'App\Http\Controllers\CashboxController');
 
 //invoice
 Route::resource('invoice', 'App\Http\Controllers\InvoiceController');
-Route::get('dynamicBranch/fetch', 'App\Http\Controllers\InvoiceController@fetchBranch')->name('dynamicBranch.fetch');
+Route::get('dynamicCourse/fetch', 'App\Http\Controllers\InvoiceController@fetchCourse')->name('dynamicCourse.fetch');
+//dynamicRound
+Route::get('dynamicRound/fetch', 'App\Http\Controllers\InvoiceController@fetchRound')->name('dynamicRound.fetch');
 
