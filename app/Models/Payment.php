@@ -37,6 +37,12 @@ class Payment extends Model
     }
 
 
+    public function employee(){
+        return $this->belongsTo('App\Models\Employee', 'employee_id');
+
+    }
+
+
     public function trainer(){
         return $this->belongsTo('App\Models\Trainer', 'trainer_id');
 
