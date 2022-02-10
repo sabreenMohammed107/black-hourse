@@ -37,7 +37,7 @@
                                     <td></td>
                                     <td>{{ $index + 1 }}</td>
 
-                                    <td>{{$row->employee->name ?? ''}}</td>
+                                    <td>{{$row->employee->emp_name ?? ''}}</td>
                                     <td>{{date('d-m-Y', strtotime($row->invoice_date))}}</td>
                                     <td>{{$row->type->payment_type ?? ''}}</td>
                                     <td>{{$row->cashbox->name ?? ''}}</td>
