@@ -114,10 +114,11 @@
                  </a>
                  <ul class="treeview-menu">
                     <li><a href="{{ route('cashbox.index') }}"><i class="fa fa-circle-o"></i> الخزن </a></li>
+                    <li><a href="{{ route('employee.index') }}"><i class="fa fa-circle-o"></i> الموظفين </a></li>
                     <li><a href="{{ route('invoice.index') }}"><i class="fa fa-circle-o"></i> الفواتير </a></li>
-
-                     {{-- <li><a href="{{ route('admin-slider.index') }}"><i class="fa fa-circle-o"></i>  الصور الرئيسيه </a></li> --}}
-
+                    <li><a href="{{ route('payment.index') }}"><i class="fa fa-circle-o"></i> مدفوعات </a></li>
+                     <li><a href="{{ route('trainers-payment.index') }}"><i class="fa fa-circle-o"></i> مدفوعات المدربين</a></li>
+                     <li><a href="{{ route('employee-payment.index') }}"><i class="fa fa-circle-o"></i> مدفوعات الموظفين</a></li>
                  </ul>
              </li>
 

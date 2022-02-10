@@ -2,22 +2,25 @@
 
 namespace App\Http\Controllers;
 
+
 use App\Models\Branch;
 use App\Models\Cashbox;
 use App\Models\Course;
 use App\Models\Financial_entry;
 use App\Models\Invoice;
-use App\Models\Payment;
 use App\Models\Payment_type;
 use App\Models\Round;
 use App\Models\Student;
 use App\Models\Student_round;
+use App\Models\Payment;
+use App\Models\Trainer;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Database\QueryException;
-class InvoiceController extends Controller
+
+class TrainerPaymentController extends Controller
 {
     protected $object;
     protected $viewName;
@@ -28,16 +31,12 @@ class InvoiceController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function __construct(Invoice $object)
+    public function __construct(Payment $object)
     {
         $this->middleware('auth');
-        // $this->middleware('permission:users-list|users-create|users-edit|users-delete', ['only' => ['index','show']]);
-        // $this->middleware('permission:users-create', ['only' => ['create','store']]);
-        // $this->middleware('permission:users-edit', ['only' => ['edit','update']]);
-        // $this->middleware('permission:users-delete', ['only' => ['destroy']]);
         $this->object = $object;
-        $this->viewName = 'admin.invoice.';
-        $this->routeName = 'invoice.';
+        $this->viewName = 'admin.trainers-payment.';
+        $this->routeName = 'trainers-payment.';
     }
     /**
      * Display a listing of the resource.
@@ -46,7 +45,7 @@ class InvoiceController extends Controller
      */
     public function index()
     {
-        $rows = Invoice::orderBy("created_at", "Desc")->get();
+        $rows = Payment::whereNotNull('trainer_id')->orderBy("created_at", "Desc")->get();
 
         return view($this->viewName . 'index', compact('rows'));
     }
@@ -63,8 +62,9 @@ class InvoiceController extends Controller
         $cashboxes = Cashbox::all();
         $courses = Course::all();
         $rounds = Round::where('status_id', '!=', 2)->get();
-        $students = [];
-        return view($this->viewName . 'add', compact('types', 'branches', 'rounds', 'students', 'cashboxes', 'courses'));
+        $trainer = null;
+        return view($this->viewName . 'add', compact('types', 'branches', 'rounds', 'trainer', 'cashboxes', 'courses'));
+
     }
 
     /**
@@ -79,32 +79,31 @@ class InvoiceController extends Controller
         {
             // Disable foreign key checks!
             DB::statement('SET FOREIGN_KEY_CHECKS=0;');
-            //save invoice
+            //save Payment
             $input = [
-                'invoice_no' => $request->get('invoice_no'),
-                'invoice_date' => Carbon::parse($request->get('invoice_date')),
-                'student_id' => $request->get('student_id'),
+
+                'start_balance_date' => Carbon::parse($request->get('start_balance_date')),
+                'trainer_id' => $request->get('trainer_id'),
                 'payment_type_id' => $request->get('payment_type_id'),
 
                 'round_id' => $request->get('round_id'),
-                'total_required_fees' => $request->get('total_required_fees'),
-                'total_paid_before' => $request->get('total_paid_before'),
-                'total_fees_new' => $request->get('total_fees_new'),
+                'amount' => $request->get('amount'),
+
                 'user_id' => Auth::user()->id,
                 'cashbox_id' => $request->get('cashbox_id'),
                 'notes' => $request->get('notes'),
                 'system_notes' => "test",
             ];
 
-            $invoice = Invoice::create($input);
+            $payment = Payment::create($input);
            //save finance_entry
             $finance = new Financial_entry();
 
-            $finance->start_balance_date = Carbon::parse($request->get('invoice_date'));
+            $finance->start_balance_date = Carbon::parse($request->get('start_balance_date'));
             // $finance->enrty_type_id = ;
-            $finance->positive = $request->get('total_fees_new');
-            $finance->negative = 0;
-            $finance->invoice_id = $invoice->id;
+            $finance->positive =0;
+            $finance->negative =  $request->get('amount');
+            $finance->invoice_id = $payment->id;
             $finance->notes = $request->get('notes');
             $finance->save();
             DB::commit();
@@ -137,7 +136,7 @@ class InvoiceController extends Controller
      */
     public function edit($id)
     {
-        $row = Invoice::where('id', '=', $id)->first();
+        $row = Payment::where('id', '=', $id)->first();
         $branches = Branch::whereHas('cashbox', function ($query) use ($row) {
             $query->where('id', $row->cashbox_id);
         })->get();
@@ -148,8 +147,10 @@ class InvoiceController extends Controller
             $query->where('id', $row->round_id);
         })->get();
         $rounds = Round::where('status_id', '!=', 2)->get();
-        $students = Student_round::where('round_id', '=', $row->round_id)->get();
-        return view($this->viewName . 'edit', compact('row', 'types', 'branches', 'rounds', 'students', 'cashboxes', 'courses'));
+        $trainRound=Round::where('id',$row->round_id)->first();
+        $trainer =  Trainer::where('id', '=', $trainRound->trainer_id)->first();
+        return view($this->viewName . 'edit', compact('row', 'types', 'branches', 'rounds', 'trainer', 'cashboxes', 'courses'));
+
     }
 
     /**
@@ -161,48 +162,46 @@ class InvoiceController extends Controller
      */
     public function update(Request $request, $id)
     {
-        try
-        {
+        try{
             // Disable foreign key checks!
             DB::statement('SET FOREIGN_KEY_CHECKS=0;');
-//save invoice
-            $input = [
-                'invoice_no' => $request->get('invoice_no'),
-                'invoice_date' => Carbon::parse($request->get('invoice_date')),
-                'student_id' => $request->get('student_id'),
-                'payment_type_id' => $request->get('payment_type_id'),
+            //save invoice
+                        $input = [
 
-                'round_id' => $request->get('round_id'),
-                'total_required_fees' => $request->get('total_required_fees'),
-                'total_paid_before' => $request->get('total_paid_before'),
-                'total_fees_new' => $request->get('total_fees_new'),
-                'user_id' => Auth::user()->id,
-                'cashbox_id' => $request->get('cashbox_id'),
-                'notes' => $request->get('notes'),
-                'system_notes' => "test",
-            ];
-            $invoice = Invoice::where('id', '=', $id)->first();
-            $invoice->update($input);
+                            'start_balance_date' => Carbon::parse($request->get('start_balance_date')),
+                            'trainer_id' => $request->get('trainer_id'),
+                            'payment_type_id' => $request->get('payment_type_id'),
 
-//save finance_entry
-            $finance = Financial_entry::where('invoice_id', '=', $id)->first();
+                            'round_id' => $request->get('round_id'),
+                            'amount' => $request->get('amount'),
 
-            $finance->start_balance_date = Carbon::parse($request->get('invoice_date'));
-            // $finance->enrty_type_id = ;
-            $finance->positive = $request->get('total_fees_new');
-            $finance->negative = 0;
-            $finance->invoice_id = $invoice->id;
-            $finance->notes = $request->get('notes');
-            $finance->update();
-            DB::commit();
-            // Enable foreign key checks!
-            DB::statement('SET FOREIGN_KEY_CHECKS=1;');
-            return redirect()->route($this->routeName . 'index')->with('flash_success', 'تم الحفظ بنجاح');
-        } catch (\Throwable $e) {
-            DB::rollback();
+                            'user_id' => Auth::user()->id,
+                            'cashbox_id' => $request->get('cashbox_id'),
+                            'notes' => $request->get('notes'),
+                            'system_notes' => "test",
+                        ];
+                        $invoice = Invoice::where('id', '=', $id)->first();
+                        $invoice->update($input);
 
-            return redirect()->back()->withInput()->with('flash_danger', $e->getMessage());
-        }
+            //save finance_entry
+                        $finance = Financial_entry::where('invoice_id', '=', $id)->first();
+
+                        $finance->start_balance_date = Carbon::parse($request->get('start_balance_date'));
+                        // $finance->enrty_type_id = ;
+                        $finance->positive = 0;
+                        $finance->negative = $request->get('amount');
+                        $finance->invoice_id = $invoice->id;
+                        $finance->notes = $request->get('notes');
+                        $finance->update();
+                        DB::commit();
+                        // Enable foreign key checks!
+                        DB::statement('SET FOREIGN_KEY_CHECKS=1;');
+                        return redirect()->route($this->routeName . 'index')->with('flash_success', 'تم الحفظ بنجاح');
+                    } catch (\Throwable $e) {
+                        DB::rollback();
+
+                        return redirect()->back()->withInput()->with('flash_danger', $e->getMessage());
+                    }
     }
 
     /**
@@ -213,7 +212,7 @@ class InvoiceController extends Controller
      */
     public function destroy($id)
     {
-        $row = Invoice::where('id', $id)->first();
+        $row = Payment::where('id', $id)->first();
         // Delete File ..
 
         try {
@@ -254,17 +253,13 @@ class InvoiceController extends Controller
 
         if (!empty($request->get('value'))) {
 
-            $data = Student_round::where('round_id', '=', $request->get('value'))->get();
+            $data = round::where('id', '=', $request->get('value'))->first();
+            $trainer =  Trainer::where('id', '=', $data->trainer_id)->first();
         }
 
-        $output = '<option value="">..... </option>';
-        foreach ($data as $row) {
-
-            $output .= '<option value="' . $row->student->id . '">' . $row->student->name ?? '' . '</option>';
-        }
-
-        $fees = Round::where('id', '=', $request->get('value'))->first()->fees_after_discount;
-        // echo $output;
-        echo json_encode(array($output, $fees));
+        $outputName =$trainer->name;
+        $outputId =$trainer->id;
+        $fees = Round::where('id', '=', $request->get('value'))->first()->fees;
+        echo json_encode(array($outputName,$outputId,$fees));
     }
 }

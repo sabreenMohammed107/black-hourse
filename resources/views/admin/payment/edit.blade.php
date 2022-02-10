@@ -11,32 +11,27 @@
     <div class="col-md-10">
             <div class="box box-primary">
         <div class="box-header">
-          <h3 class="box-title">تعديل</h3>
+          <h3 class="box-title">اضافة</h3>
         </div>
 
 
 
 
-        <form action="{{ route('invoice.update', $row->id) }}" method="post" enctype="multipart/form-data">
+
+        <form action="{{ route('payment.update', $row->id) }}" method="post" enctype="multipart/form-data">
 
             @method('PUT')
             @csrf
 
-
                 <div class="box-body">
 
-                    <div class="col-sm-4">
-                        <div class="form-group">
-                            <label for="">رقم الفاتورة</label>
-                            <input type="text" name="invoice_no" value="{{$row->invoice_no}}" class="form-control" id="">
-                        </div>
-                    </div>
+
                     <div class="col-sm-4">
                         <div class="form-group">
                             <label for="">نوع الدفع</label>
                             <select class="form-control select2" name="payment_type_id" id="c3" >
                                 @foreach ($types as $type )
-                                <option value="{{$type->id}}"  {{ $row->branch_id == $type->id ? 'selected' : '' }}> {{$type->payment_type}}</option>
+                                <option value="{{$type->id}}" {{ $row->branch_id == $type->id ? 'selected' : '' }} > {{$type->payment_type}}</option>
                                 @endforeach
 
 
@@ -63,7 +58,7 @@
                             <select class=" select2 dynamic form-control" name="course_id" id="course_id">
                                 <option value=""> إختر</option>
                                 @foreach ($courses as $type )
-                                <option value="{{$type->id}}"  {{ $row->round->course_id == $type->id ? 'selected' : '' }} > {{$type->name}}</option>
+                                <option value="{{$type->id}}" {{ $row->round->course_id == $type->id ? 'selected' : '' }}> {{$type->name}}</option>
                                 @endforeach
 
                             </select>
@@ -75,7 +70,7 @@
                             <label for="">رقم المجموعة</label>
                             <select class=" select2 round form-control" name="round_id" id="round_id" >
                                 @foreach ($rounds as $type )
-                                <option value="{{$type->id}}"  {{ $row->round_id == $type->id ? 'selected' : '' }} > {{$type->round_no}}</option>
+                                <option value="{{$type->id}}" {{ $row->round_id == $type->id ? 'selected' : '' }}> {{$type->round_no}}</option>
                                 @endforeach
                             </select>
                         </div>
@@ -84,7 +79,6 @@
                         <div class="form-group">
                             <label for="">اسم الطالب</label>
                             <select class=" select2 form-control" name="student_id" id="student_id" >
-
                                 @foreach ($students as $type )
                                 <option value="{{$type->student->id}}"  {{ $row->student_id == $type->student->id ? 'selected' : '' }} > {{$type->student->name}}</option>
                                 @endforeach
@@ -96,7 +90,7 @@
                     <div class="col-sm-4">
                         <div class="form-group">
                             <label for="">تاريخ الفاتورة</label>
-                            <input type="date" name="invoice_date" value="{{date('Y-m-d', strtotime($row->invoice_date))}}" class="form-control">
+                            <input type="date" name="start_balance_date" value="{{date('Y-m-d', strtotime($row->start_balance_date))}}" class="form-control">
                         </div>
                     </div>
 
@@ -105,27 +99,16 @@
                     <div class="col-sm-4">
                         <div class="form-group">
                             <label for="">المبلغ المطلوب </label>
-                            <input type="number" name="total_required_fees"  value="{{$row->total_required_fees}}" class="form-control" id="total_required_fees" readonly>
+                            <input type="number" name="amount"  value="{{$row->amount}}" class="form-control" id="amount" >
                         </div>
                     </div>
-                    <div class="col-sm-4">
-                        <div class="form-group">
-                            <label for="">المبلغ المدفوع </label>
-                            <input type="number" name="total_paid_before" value="{{$row->total_paid_before}}" oninput="myFunction()" class="form-control" id="total_paid_before" >
-                        </div>
-                    </div>
-                    <div class="col-sm-4">
-                        <div class="form-group">
-                            <label for="">المبلغ المتبقى </label>
-                            <input type="number" name="total_fees_new" value="{{$row->total_fees_new}}" class="form-control" id="total_fees_new" readonly>
-                        </div>
-                    </div>
+
                     <div class="col-sm-4">
                         <div class="form-group">
                             <label for="">الخزنة </label>
                             <select class=" select2 form-control" name="cashbox_id" id="cashbox_id" >
                                 @foreach ($cashboxes as $type )
-                                <option value="{{$type->id}}" {{ $row->cashbox_id == $type->id ? 'selected' : '' }}> {{$type->name}}</option>
+                                <option value="{{$type->id}}" {{ $row->cashbox_id == $type->id ? 'selected' : '' }} > {{$type->name}}</option>
                                 @endforeach
                             </select>
                         </div>
@@ -141,7 +124,7 @@
             <!-- /.card-body -->
             <div class="box-footer">
                 <button type="submit" class="btn btn-primary">حفظ</button>
-                <a href="{{route('invoice.index')}}" class="btn btn-danger">إلغاء</a>
+                <a href="{{route('payment.index')}}" class="btn btn-danger">إلغاء</a>
             </div>
         </form>
             </div>
@@ -152,11 +135,7 @@
 <!-- Select2 -->
 <script src="{{ asset('adminassets/plugins/select2/js/select2.full.min.js')}}"></script>
 <script>
-   function myFunction() {
-    var total_required_fees = $("#total_required_fees").val();
-    var total_paid_before = $("#total_paid_before").val();
-    $('#total_fees_new').val((parseFloat(total_required_fees) - parseFloat(total_paid_before)).toFixed(3));
-}
+
     $(function () {
         //Initialize Select2 Elements
         $('#c1').select2()
@@ -168,28 +147,7 @@
         $('.select2bs4').select2({
             theme: 'bootstrap4'
         })
-//branch
- $('.dynamic').change(function() {
 
-
-var value = $(this).val();
-// var course=$('#course_id option:selected').val()
-$.ajax({
-    url: "{{ route('dynamicCourse.fetch') }}",
-    method: "get",
-    data: {
-        value: value,
-        // course:course
-    },
-    success: function(result) {
-        $('#round_id').html(result);
-
-        $('#round_id').select2();
-    }
-
-})
-
-});
 //course
 $('.dynamic').change(function() {
 
@@ -197,7 +155,7 @@ $('.dynamic').change(function() {
 var value = $(this).val();
 // var course=$('#course_id option:selected').val()
 $.ajax({
-    url: "{{ route('dynamicCourse.fetch') }}",
+    url: "{{ route('paymentdynamicCourse.fetch') }}",
     method: "get",
     data: {
         value: value,
@@ -219,7 +177,7 @@ $('.round').change(function() {
 var value = $(this).val();
 // var course=$('#course_id option:selected').val()
 $.ajax({
-    url: "{{ route('dynamicRound.fetch') }}",
+    url: "{{ route('paymentdynamicRound.fetch') }}",
     method: "get",
     data: {
         value: value,

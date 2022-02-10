@@ -87,4 +87,26 @@ Route::resource('invoice', 'App\Http\Controllers\InvoiceController');
 Route::get('dynamicCourse/fetch', 'App\Http\Controllers\InvoiceController@fetchCourse')->name('dynamicCourse.fetch');
 //dynamicRound
 Route::get('dynamicRound/fetch', 'App\Http\Controllers\InvoiceController@fetchRound')->name('dynamicRound.fetch');
+//employee
+Route::resource('employee', 'App\Http\Controllers\EmployeeController');
+
+//payment
+Route::resource('payment', 'App\Http\Controllers\PaymentController');
+Route::get('paymentdynamicCourse/fetch', 'App\Http\Controllers\PaymentController@fetchCourse')->name('paymentdynamicCourse.fetch');
+//dynamicRound
+Route::get('paymentdynamicRound/fetch', 'App\Http\Controllers\PaymentController@fetchRound')->name('paymentdynamicRound.fetch');
+
+//trainers-payment
+
+Route::resource('trainers-payment', 'App\Http\Controllers\TrainerPaymentController');
+
+Route::get('trainers-paymentdynamicCourse/fetch', 'App\Http\Controllers\TrainerPaymentController@fetchCourse')->name('trainers-paymentdynamicCourse.fetch');
+//dynamicRound
+Route::get('trainers-paymentdynamicRound/fetch', 'App\Http\Controllers\TrainerPaymentController@fetchRound')->name('trainers-paymentdynamicRound.fetch');
+// employee-payment
+Route::resource('employee-payment', 'App\Http\Controllers\EmployeePaymentController');
+
+Route::get('employee-paymentdynamicSalary/fetch', 'App\Http\Controllers\EmployeePaymentController@fetchSalary')->name('employee-paymentdynamicSalary.fetch');
+//dynamicRound
+// Route::get('employee-paymentdynamicRound/fetch', 'App\Http\Controllers\EmployeePaymentController@fetchRound')->name('employee-paymentdynamicRound.fetch');
 
