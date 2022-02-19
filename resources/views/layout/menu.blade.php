@@ -75,7 +75,7 @@
                      <li><a href="{{ route('current-groups.index') }}"><i class="fa fa-circle-o"></i> المجموعات
                              الحالية </a></li>
                              <li><a href="{{ route('general-students.index') }}"><i class="fa fa-circle-o"></i> الطلاب </a></li>
-                             <li><a href="#"><i class="fa fa-circle-o"></i> الجدول اليومي </a></li>
+                             <li><a href="{{ route('daily-schedule.index') }}"><i class="fa fa-circle-o"></i> الجدول اليومي </a></li>
                              <li><a href="{{ route('attendance.index') }}"><i class="fa fa-circle-o"></i> الحضور </a></li>
 
                      <li><a href="{{ route('accept-exeptions') }}"><i class="fa fa-circle-o"></i> الموافقة على
@@ -90,14 +90,15 @@
                      <i class="fa fa-users"></i>
                      <span>خدمة عملاء</span>
                      <i class="fa fa-angle-left pull-right"></i>
+
                  </a>
                  <ul class="treeview-menu">
                      <li>
-
-                         {{-- <li>
-                    <a href="{{ route('category.index') }}"><i class="fa fa-circle-o text-red"></i> <span>عرض التصنيفات</span></a>
+                        <li><a href="{{ route('potential-clients.index') }}"><i class="fa fa-circle-o"></i> عملاء مهتمين </a></li>
+                          <li>
+                    <a href="{{ route('uninterested-clients.index') }}"><i class="fa fa-circle-o text-red"></i> <span>عملاء غير مهتمين </span></a>
                 </li>
-                  <li><a href="{{ route('category.create') }}"><i class="fa fa-circle-o"></i> اضافه تصنيف</a></li> --}}
+                  {{--<li><a href="{{ route('category.create') }}"><i class="fa fa-circle-o"></i> اضافه تصنيف</a></li> --}}
 
                  </ul>
              </li>

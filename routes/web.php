@@ -110,3 +110,19 @@ Route::get('employee-paymentdynamicSalary/fetch', 'App\Http\Controllers\Employee
 //dynamicRound
 // Route::get('employee-paymentdynamicRound/fetch', 'App\Http\Controllers\EmployeePaymentController@fetchRound')->name('employee-paymentdynamicRound.fetch');
 
+Route::resource('daily-schedule', 'App\Http\Controllers\DailyScheduleControler');
+
+Route::get('branch-room/fetch', 'App\Http\Controllers\DailyScheduleControler@fetchRoom')->name('branch-room.fetch');
+
+Route::resource('potential-clients', 'App\Http\Controllers\PotentialClientsController');
+//change_funnel
+Route::post('change_funnel', 'App\Http\Controllers\PotentialClientsController@funnel')->name('change_funnel');
+Route::post('follow_save', 'App\Http\Controllers\PotentialClientsController@followSave')->name('follow_save');
+
+Route::post('follow_update', 'App\Http\Controllers\PotentialClientsController@followUpdate')->name('follow_update');
+
+//uninterested-clients
+Route::resource('uninterested-clients', 'App\Http\Controllers\UninterestedClientsController');
+
+
+

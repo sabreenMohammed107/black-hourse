@@ -31,7 +31,7 @@
                 <td>{{$row->round->round_no ?? ''}}</td>
                     <td>{{ date('d-m-Y', strtotime($row->followup_date)) }} </td>
                     <td>{{ $row->user->name ?? '' }}</td>
-                    <td>{{ $row->notes }} </td>
+                    <td>{{ $row->text }} </td>
                     <td>{{ $row->type->followup_name ?? '' }}</td>
                     <td>{{ $row->notes }} </td>
                     <td>

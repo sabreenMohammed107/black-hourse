@@ -35,4 +35,14 @@ class Student extends Model
     public function city(){
         return $this->belongsTo('App\Models\City', 'city_id');
     }
+    public function branches(){
+        return $this->belongsToMany('App\Models\Branch', 'student_branches','student_id','branch_id');
+    }
+    public function rounds(){
+        return $this->belongsToMany('App\Models\Round', 'student_rounds','student_id','round_id');
+    }
+    public function follow()
+{
+    return $this->hasOne('App\Models\Followup_center')->latest();
+}
 }
