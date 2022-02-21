@@ -22,6 +22,7 @@ class CreateStudentRoundsTable extends Migration
             $table->double('total_fees',11,2)->nullable();
             $table->double('total_paid',11,2)->nullable();
             $table->foreignId('status_id')->nullable();
+            $table->foreignId('certificate_status_id')->nullable();
             $table->text('note')->nullable();
             $table->timestamps();
         });

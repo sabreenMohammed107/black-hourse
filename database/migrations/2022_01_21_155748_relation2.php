@@ -18,6 +18,7 @@ class Relation2 extends Migration
             $table->foreign('round_id')->references('id')->on('rounds');
             $table->foreign('student_id')->references('id')->on('students');
             $table->foreign('status_id')->references('id')->on('request_statuses');
+            $table->foreign('certificate_status_id')->references('id')->on('certificate_statuses');
 
         });
 

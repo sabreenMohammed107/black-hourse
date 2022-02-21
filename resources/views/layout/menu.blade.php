@@ -76,8 +76,9 @@
                              الحالية </a></li>
                              <li><a href="{{ route('general-students.index') }}"><i class="fa fa-circle-o"></i> الطلاب </a></li>
                              <li><a href="{{ route('daily-schedule.index') }}"><i class="fa fa-circle-o"></i> الجدول اليومي </a></li>
-                             <li><a href="{{ route('attendance.index') }}"><i class="fa fa-circle-o"></i> الحضور </a></li>
-
+                              <li><a href="{{ route('attendance.index') }}"><i class="fa fa-circle-o"></i> الحضور </a></li>
+                              <li><a href="{{ route('waiting.index') }}"><i class="fa fa-circle-o"></i> حجز بدون تحديد </a></li>
+                              <li><a href="{{ route('certificates.index') }}"><i class="fa fa-circle-o"></i> شهادات الدورات   </a></li>
                      <li><a href="{{ route('accept-exeptions') }}"><i class="fa fa-circle-o"></i> الموافقة على
                              الاستثناءات </a></li>
 

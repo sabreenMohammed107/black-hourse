@@ -12,6 +12,7 @@ class Student_round extends Model
         'round_id',
         'student_id',
         'status_id',
+        'certificate_status_id',
         'register_date',
         'total_fees',
         'total_paid',

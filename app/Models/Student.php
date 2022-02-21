@@ -22,6 +22,9 @@ class Student extends Model
     'sale_fannel_id',
     'request_status_id',
     'note',
+    'contact_date',
+    'contact_times',
+    'mobile2',
     ];
     public function status(){
         return $this->belongsTo('App\Models\Request_status', 'request_status_id');

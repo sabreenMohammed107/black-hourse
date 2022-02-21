@@ -123,6 +123,15 @@ Route::post('follow_update', 'App\Http\Controllers\PotentialClientsController@fo
 
 //uninterested-clients
 Route::resource('uninterested-clients', 'App\Http\Controllers\UninterestedClientsController');
+Route::resource('certificates', 'App\Http\Controllers\CertificatesController');
+//updatingCerificate
+Route::post('updatingCerificate', 'App\Http\Controllers\CertificatesController@updatingCerificate')->name('updatingCerificate');
+
+
+//waiting
+Route::resource('waiting', 'App\Http\Controllers\WaitingController');
+//saveStudent
+Route::post('saveStudent', 'App\Http\Controllers\WaitingController@saveStudent')->name('saveStudent');
 
 
 
