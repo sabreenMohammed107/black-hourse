@@ -91,6 +91,20 @@
                         </div>
                         <div class="col-sm-6">
                             <div class="form-group">
+                                <label for=""> إيجار القاعة</label>
+                                <input type="text" name="rent_room_fees" value="{{ $row->rent_room_fees }}"
+                                    class="form-control" id="">
+                            </div>
+                        </div>
+                        <div class="col-sm-6">
+                            <div class="form-group">
+                                <label for=""> مبلغ الشهادة</label>
+                                <input type="text" name="certificate_fees" value="{{ $row->certificate_fees }}"
+                                    class="form-control" id="">
+                            </div>
+                        </div>
+                        <div class="col-sm-6">
+                            <div class="form-group">
                                 <label for=""> اسم المدرب</label>
                                 <select name="trainer_id" class="form-control" id="">
 

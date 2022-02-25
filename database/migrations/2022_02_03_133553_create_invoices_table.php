@@ -22,7 +22,7 @@ class CreateInvoicesTable extends Migration
             $table->foreignId('deploma_id')->nullable();
             $table->foreignId('round_id')->nullable();
             $table->double('total_required_fees',11,2)->nullable();
-            $table->double('total_paid_before',11,2)->nullable();
+
             $table->double('total_fees_new',11,2)->nullable();
             $table->foreignId('user_id')->nullable();
             $table->foreignId('cashbox_id')->nullable();

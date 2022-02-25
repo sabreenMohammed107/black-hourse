@@ -34,6 +34,8 @@ Route::get('/room/1/full-calender', 'App\Http\Controllers\RoomController@fullCal
 Route::resource('round', 'App\Http\Controllers\RoundController');
 //start Round
 Route::post('start-round', 'App\Http\Controllers\RoundController@startRound')->name('start-round');
+//pay-student-round
+Route::post('pay-student-round', 'App\Http\Controllers\RoundController@payStudentRound')->name('pay-student-round');
 
 //course
 Route::resource('course', 'App\Http\Controllers\CourseController');
@@ -63,6 +65,9 @@ Route::resource('course-deploma', 'App\Http\Controllers\CourseDeplomaController'
 //current-groups
 
 Route::resource('current-groups', 'App\Http\Controllers\CurrentGroupsController');
+//fin-round-data
+Route::get('fin-round-data\{id}', 'App\Http\Controllers\CurrentGroupsController@showFinData')->name('fin-round-data');
+
 //accept-exeptions
 Route::get('accept-exeptions', 'App\Http\Controllers\CurrentGroupsController@acceptExeptions')->name('accept-exeptions');
 Route::post('exeption-accept\{id}', 'App\Http\Controllers\CurrentGroupsController@accept')->name('exeption-accept');

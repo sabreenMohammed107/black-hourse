@@ -60,7 +60,7 @@
                 </button>
             </div>
             <div class="modal-body text-center">
-                <h3><i class="fas fa-fire text-danger"></i></h3>
+                <h3><i class="fa fa-fire text-danger"></i></h3>
                 <h4 class="text-danger">هل تريد الغاء المحاضرة ؟</h4>
             </div>
             <div class="modal-footer">

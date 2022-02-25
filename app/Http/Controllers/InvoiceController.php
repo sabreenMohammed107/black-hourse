@@ -59,7 +59,7 @@ class InvoiceController extends Controller
     public function create()
     {
         $branches = Branch::all();
-        $types = Payment_type::all();
+        $types = Payment_type::where('payment_flag',1)->get();
         $cashboxes = Cashbox::all();
         $courses = Course::all();
         $rounds = Round::where('status_id', '!=', 2)->get();
@@ -77,6 +77,8 @@ class InvoiceController extends Controller
     {
         try
         {
+            $payedInvoice=Invoice::where('student_id',$request->get('student_id'))->where('round_id',$request->get('round_id'))->first();
+
             // Disable foreign key checks!
             DB::statement('SET FOREIGN_KEY_CHECKS=0;');
             //save invoice
@@ -88,7 +90,7 @@ class InvoiceController extends Controller
 
                 'round_id' => $request->get('round_id'),
                 'total_required_fees' => $request->get('total_required_fees'),
-                'total_paid_before' => $request->get('total_paid_before'),
+
                 'total_fees_new' => $request->get('total_fees_new'),
                 'user_id' => Auth::user()->id,
                 'cashbox_id' => $request->get('cashbox_id'),
@@ -141,7 +143,7 @@ class InvoiceController extends Controller
         $branches = Branch::whereHas('cashbox', function ($query) use ($row) {
             $query->where('id', $row->cashbox_id);
         })->get();
-        $types = Payment_type::all();
+        $types = Payment_type::where('payment_flag',1)->get();
         $cashboxes = Cashbox::all();
 
         $courses = Course::whereHas('rounds', function ($query) use ($row) {
@@ -174,7 +176,7 @@ class InvoiceController extends Controller
 
                 'round_id' => $request->get('round_id'),
                 'total_required_fees' => $request->get('total_required_fees'),
-                'total_paid_before' => $request->get('total_paid_before'),
+
                 'total_fees_new' => $request->get('total_fees_new'),
                 'user_id' => Auth::user()->id,
                 'cashbox_id' => $request->get('cashbox_id'),
@@ -182,6 +184,7 @@ class InvoiceController extends Controller
                 'system_notes' => "test",
             ];
             $invoice = Invoice::where('id', '=', $id)->first();
+
             $invoice->update($input);
 
 //save finance_entry

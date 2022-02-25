@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Branch;
 use App\Models\City;
 use App\Models\Company;
 use App\Models\Course;
@@ -12,15 +11,15 @@ use App\Models\Exeption;
 use App\Models\Exeption_type;
 use App\Models\Followup_center;
 use App\Models\Followup_type;
+use App\Models\Invoice;
 use App\Models\Request_status;
-use App\Models\Room;
 use App\Models\Round;
 use App\Models\Round_day;
 use App\Models\Sale_funnel;
 use App\Models\Student;
 use App\Models\Student_round;
-use App\Models\Trainer;
 use Carbon\Carbon;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\QueryException;
 use Illuminate\Http\Request;
 
@@ -107,22 +106,38 @@ class GeneralStudentsController extends Controller
         $status = Request_status::all();
         $studentRounds = Student_round::where('student_id', $id)->get();
         $rounds = Student_round::where('student_id', $id)->get();
-        $deplomas=Deploma_student::where('student_id', $id)->get();
+        $deplomas = Deploma_student::where('student_id', $id)->get();
         $followups = Followup_center::where('student_id', $id)->where('followup_flag', 2)->get();
         $callcenter = Followup_center::where('student_id', $id)->where('followup_flag', 1)->get();
         $fullowupTypes = Followup_type::all();
-   $roundDays = Round_day::where('round_id', $id)->get();
-   $folowRounds=Round::all();
-        // $branches = Branch::all();
-        // $rooms = Room::all();
-        // $courses = Course::all();
-        // $trainers = Trainer::all();
+        $filterd_rounds = array();
+        $roundDays = Round_day::where('round_id', $id)->get();
+        $folowRounds = Round::all();
+        $finance = Invoice::where('student_id', $id)->whereIn('payment_type_id',[101,102])->get();
+        $roundsinFin = Invoice::where('student_id', $id)->whereNotNull('round_id')->whereIn('payment_type_id',[101,102])->distinct()->pluck('round_id');
 
+        foreach ($roundsinFin as $round) {
+            $obj = new Collection();
+            $obj->roundsFinance = array();
+            // $obj->course=new Round();
+            foreach ($finance as $fin) {
+                if ($fin->round_id === $round) {
+
+                    array_push($obj->roundsFinance, $fin);
+
+                }
+            }
+            $roundsinFin = Invoice::where('student_id', $id)->where('round_id', $round)->whereIn('payment_type_id',[101,102])->orderBy("created_at", "Desc")->first();
+            $obj->student =$id;
+            $obj->course = Round::where('id', $round)->first();
+
+            array_push($filterd_rounds, $obj);
+
+        }
 
         $exeptions = Exeption::where('student_id', $id)->get();
         $exeptionTypes = Exeption_type::all();
-
-        return view($this->viewName . 'view', compact('row','studentSS','deplomas','callcenter','folowRounds', 'studentRounds', 'rounds', 'roundDays', 'exeptions', 'exeptionTypes', 'followups', 'fullowupTypes', 'companies', 'cities', 'funnels', 'status'));
+        return view($this->viewName . 'view', compact('row', 'studentSS', 'deplomas', 'callcenter', 'folowRounds', 'studentRounds', 'rounds', 'roundDays', 'exeptions', 'exeptionTypes', 'followups', 'fullowupTypes', 'companies', 'cities', 'funnels', 'status', 'filterd_rounds'));
 
     }
 

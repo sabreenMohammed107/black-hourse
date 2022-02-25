@@ -137,6 +137,20 @@
                                                             </div>
                                                             <div class="col-sm-6">
                                                                 <div class="form-group">
+                                                                    <label for=""> إيجار القاعة</label>
+                                                                    <input type="text" disabled name="rent_room_fees" value="{{ $row->rent_room_fees }}"
+                                                                        class="form-control" id="">
+                                                                </div>
+                                                            </div>
+                                                            <div class="col-sm-6">
+                                                                <div class="form-group">
+                                                                    <label for=""> مبلغ الشهادة</label>
+                                                                    <input type="text" disabled name="certificate_fees" value="{{ $row->certificate_fees }}"
+                                                                        class="form-control" id="">
+                                                                </div>
+                                                            </div>
+                                                            <div class="col-sm-6">
+                                                                <div class="form-group">
                                                                     <label for=""> اسم المدرب</label>
                                                                     <select name="trainer_id" class="form-control" id="">
 
@@ -231,5 +245,12 @@
     @endsection
 
     @section('scripts')
+<script>
+     function myFunction(index) {
+    var total_required_fees = $("#total_required_fees"+index).val();
+    var total_fees_new = Number($("#total_fees_new"+index).val()) + Number($("#total_paid_before"+index).val());
 
+    $('#remain'+index).val(total_required_fees-total_fees_new);
+}
+    </script>
     @endsection

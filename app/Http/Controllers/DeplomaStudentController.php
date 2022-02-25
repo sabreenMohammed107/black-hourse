@@ -66,7 +66,7 @@ class DeplomaStudentController extends Controller
             // Disable foreign key checks!
             DB::statement('SET FOREIGN_KEY_CHECKS=0;');
             $input = $request->except(['_token', 'deploma_id']);
-
+$input['request_status_id']=3;
             $student=Student::create($input);
 
             $deploma = Deploma::where('id',$request->get('deploma_id'))->first();

@@ -64,7 +64,7 @@ class StudentController extends Controller
             // Disable foreign key checks!
             DB::statement('SET FOREIGN_KEY_CHECKS=0;');
             $input = $request->except(['_token', 'round_id']);
-
+$input['request_status_id']=3;
             $student=Student::create($input);
 
             $round = Round::where('id',$request->get('round_id'))->first();
@@ -158,6 +158,7 @@ class StudentController extends Controller
             'register_date' => Carbon::now()->toDateTimeString(),
             'total_fees' => $round->fees,
             'total_paid' => 0,
+
 
         ];
 

@@ -30,6 +30,8 @@ class CreateRoundsTable extends Migration
             $table->string('round_no')->nullable();
             $table->dateTime('start_date',0)->nullable();
             $table->dateTime('end_date',0)->nullable();
+            $table->double('rent_room_fees',11,2)->nullable();
+            $table->double('certificate_fees',11,2)->nullable();
             $table->double('fees',11,2)->nullable();
             $table->decimal('discount_per',3,0)->nullable();
             $table->double('fees_after_discount',11,2)->nullable();

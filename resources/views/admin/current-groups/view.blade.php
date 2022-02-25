@@ -237,7 +237,7 @@
                                             {{-- مالية --}}
                                             <div class="tab-pane fade" id="custom-tabs-one-3" role="tabpanel"
                                                 aria-labelledby="custom-tabs-one-3-tab">
-                                                {{-- @include('admin.current-groups.students') --}}
+                                                @include('admin.current-groups.finance')
                                                 <hr />
 
 
@@ -289,6 +289,12 @@
 <!-- Select2 -->
 <script src="{{ asset('adminassets/plugins/select2/js/select2.full.min.js')}}"></script>
 <script>
+       function myFunction(index) {
+    var total_required_fees = $("#total_required_fees"+index).val();
+    var total_fees_new = Number($("#total_fees_new"+index).val()) + Number($("#total_paid_before"+index).val());
+
+    $('#remain'+index).val(total_required_fees-total_fees_new);
+}
     $(function () {
         //Initialize Select2 Elements
         $('.select2').select2()

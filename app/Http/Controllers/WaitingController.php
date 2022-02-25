@@ -12,7 +12,7 @@ use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
-
+use Illuminate\Database\QueryException;
 class WaitingController extends Controller
 {
     protected $object;
@@ -70,6 +70,8 @@ class WaitingController extends Controller
     {
         try
         {
+            $payedInvoice=Invoice::where('student_id',$request->get('student_id'))->where('round_id',$request->get('round_id'))->first();
+
             // Disable foreign key checks!
             DB::statement('SET FOREIGN_KEY_CHECKS=0;');
             //save invoice
@@ -81,8 +83,8 @@ class WaitingController extends Controller
 
                 'round_id' => $request->get('round_id'),
                 'total_required_fees' => $request->get('total_required_fees'),
-                'total_paid_before' => 0,
-                'total_fees_new' => $request->get('remian'),
+
+                'total_fees_new' => $request->get('total_fees_new'),
                 'user_id' => Auth::user()->id,
                 // 'cashbox_id' =>Cashbox::where('branch_id',$request->get('branch_id'))->first()->id,
                 'notes' => $request->get('notes'),
@@ -92,6 +94,7 @@ class WaitingController extends Controller
             if ($cashbox) {
                 $input['cashbox_id'] = $cashbox->id;
             }
+
             $invoice = Invoice::create($input);
             //save finance_entry
             $finance = new Financial_entry();
@@ -170,8 +173,8 @@ class WaitingController extends Controller
 
                 'round_id' => $request->get('round_id'),
                 'total_required_fees' => $request->get('total_required_fees'),
-                'total_paid_before' => 0,
-                'total_fees_new' => $request->get('remian'),
+
+                'total_fees_new' => $request->get('total_fees_new'),
                 'user_id' => Auth::user()->id,
                 // 'cashbox_id' =>Cashbox::where('branch_id',$request->get('branch_id'))->first()->id,
                 'notes' => $request->get('notes'),
@@ -181,7 +184,9 @@ class WaitingController extends Controller
             if ($cashbox) {
                 $input['cashbox_id'] = $cashbox->id;
             }
+
             $invoice = Invoice::where('id', '=', $id)->first();
+
             $invoice->update($input);
             //save finance_entry
             $finance = Financial_entry::where('invoice_id', '=', $id)->first();
@@ -233,7 +238,7 @@ class WaitingController extends Controller
 
             // return redirect()->back()->with('flash_danger', 'هذه القضية مربوطه بجدول اخر ..لا يمكن المسح');
         }
-
+    }
     public function saveStudent(Request $request)
     {
         try
@@ -241,7 +246,7 @@ class WaitingController extends Controller
             // Disable foreign key checks!
             DB::statement('SET FOREIGN_KEY_CHECKS=0;');
             $input = $request->except(['_token', 'round_id']);
-
+$input['request_status_id']=3;
             $student = Student::create($input);
 
             DB::commit();

@@ -179,7 +179,8 @@ class PaymentController extends Controller
                         'notes' => $request->get('notes'),
                         'system_notes' => "test",
                     ];
-                    $invoice = Invoice::where('id', '=', $id)->first();
+                    // $payment = Payment::create($input);
+                    $invoice = Payment::where('id', '=', $id)->first();
                     $invoice->update($input);
 
         //save finance_entry

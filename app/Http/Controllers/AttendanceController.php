@@ -3,15 +3,21 @@
 namespace App\Http\Controllers;
 
 use App\Models\Attendance;
+use App\Models\Cashbox;
+use App\Models\Financial_entry;
+use App\Models\Invoice;
 use App\Models\Round;
 use App\Models\Session;
+use App\Models\Student_round;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class AttendanceController extends Controller
 {
     protected $object;
     protected $viewName;
-    protected $routeName ;
+    protected $routeName;
 
     /**
      * UserController Constructor.
@@ -27,16 +33,16 @@ class AttendanceController extends Controller
         // $this->middleware('permission:users-delete', ['only' => ['destroy']]);
         $this->object = $object;
         $this->viewName = 'admin.attendance.';
-    $this->routeName = 'attendance.';
+        $this->routeName = 'attendance.';
     }
-     /**attendance
+    /**attendance
      * Display a listing of the resource.
      *
      * @return \Illuminate\Http\Response
      */
     public function index()
     {
-        $rows = Round::where('status_id',2)->orderBy("created_at", "Desc")->get();
+        $rows = Round::where('status_id', 2)->orderBy("created_at", "Desc")->get();
 
         return view($this->viewName . 'index', compact('rows'));
     }
@@ -59,36 +65,99 @@ class AttendanceController extends Controller
      */
     public function store(Request $request)
     {
-       //invoice items
-       $count = $request->counter;
-       $details = [];
+        //invoice items
+        $count = $request->counter;
+        $details = [];
 
-       for ($i = 1; $i <= $count; $i++) {
-           $row=Attendance::where('session_id', $request->get('session_id'))
-           ->where('student_round_id',$request->get('student_round_id' . $i))->first();
-// dd($request->get('session_id'));
-           $detail = [
+        for ($i = 1; $i <= $count; $i++) {
+            $row = Attendance::where('session_id', $request->get('session_id'))
+                ->where('student_round_id', $request->get('student_round_id' . $i))->first();
+            $detail = [
 
-               'session_id' => $request->get('session_id'),
+                'session_id' => $request->get('session_id'),
 
-            //    'student_round_id' => $request->get('student_round_id' . $i),
+                'is_atend' => $request->get('is_atend' . $i),
+                'room_rent_fees' => $request->get('room_rent_fees' . $i),
 
-               'is_atend' => $request->get('is_atend' . $i),
-               'room_rent_fees' => $request->get('room_rent_fees'. $i),
+                'room_rent_paid' => $request->get('room_rent_paid' . $i),
 
-               'room_rent_paid' => $request->get('room_rent_paid' . $i),
+                'certificate_fees' => $request->get('certificate_fees' . $i),
 
-               'certificate_fees' => $request->get('certificate_fees' . $i),
+                'certificate_paid' => $request->get('certificate_paid' . $i),
+                'notes' => $request->get('notes' . $i),
 
-               'certificate_paid' => $request->get('certificate_paid' . $i),
-               'notes' => $request->get('notes'. $i),
+            ];
 
+            $row->update($detail);
+            //save in invoice
+            $studentRound = Student_round::where('id', $request->get('student_round_id' . $i))->first();
+            $session = Session::where('id', $request->get('session_id'))->first();
+            $cashbox = Cashbox::where('branch_id', $studentRound->round->branch_id)->first();
 
-           ];
+            // save rent
+            $invoice = new Invoice();
+            $invoice->invoice_no = $i;
+            $invoice->invoice_date = Carbon::parse($session->session_date);
+            $invoice->student_id = $studentRound->student_id;
+            $invoice->round_id = $studentRound->round_id;
+            $invoice->total_required_fees = $request->get('room_rent_fees' . $i);
+            $invoice->total_fees_new = $request->get('room_rent_paid' . $i);
+            $invoice->user_id = Auth::user()->id;
+            $invoice->payment_type_id = 103;
+            $invoice->notes = $request->get('notes' . $i);
+            $invoice->system_notes = "test";
+            if ($cashbox) {
+                $invoice->cashbox_id = $cashbox->id;
+            }
 
-           $row->update($detail);
+            $invoice->save();
+
+            //save finance_entry
+
+            $finance = new Financial_entry();
+
+            $finance->start_balance_date = Carbon::parse($session->session_date);
+            $finance->positive = $request->get('room_rent_paid' . $i);
+            $finance->negative = 0;
+            $finance->invoice_id = $invoice->id;
+            $finance->notes = $request->get('notes' . $i);
+            $finance->save();
+//save certificate
+$existInvoice=Invoice::where('student_id', $studentRound->student_id)->where('round_id', $studentRound->round_id)->where('payment_type_id',104)->orderBy("created_at", "Desc")->first();
+if($existInvoice){
+
+}else{
+    $invoice = new Invoice();
+    $invoice->invoice_no = $i;
+    $invoice->invoice_date = Carbon::parse($session->session_date);
+    $invoice->student_id = $studentRound->student_id;
+    $invoice->round_id = $studentRound->round_id;
+    $invoice->total_required_fees = $request->get('room_rent_fees' . $i);
+    $invoice->total_fees_new = $request->get('room_rent_paid' . $i);
+    $invoice->user_id = Auth::user()->id;
+    $invoice->payment_type_id = 104;
+    $invoice->notes = $request->get('notes' . $i);
+    $invoice->system_notes = "test";
+    if ($cashbox) {
+        $invoice->cashbox_id = $cashbox->id;
+    }
+
+    $invoice->save();
+
+    //save finance_entry
+
+    $finance = new Financial_entry();
+
+    $finance->start_balance_date = Carbon::parse($session->session_date);
+    $finance->positive = $request->get('room_rent_paid' . $i);
+    $finance->negative = 0;
+    $finance->invoice_id = $invoice->id;
+    $finance->notes = $request->get('notes' . $i);
+    $finance->save();
+
+}
+
         }
-
 
         return redirect()->back()->with('flash_success', 'تم الحذف بنجاح !');
 
@@ -104,7 +173,7 @@ class AttendanceController extends Controller
     {
         $row = Round::where('id', '=', $id)->first();
         $sessions = Session::where('round_id', '=', $id)->get();
-        return view($this->viewName . 'view', compact('row','sessions'));
+        return view($this->viewName . 'view', compact('row', 'sessions'));
     }
 
     /**
@@ -117,7 +186,8 @@ class AttendanceController extends Controller
     {
         $rowSession = Session::where('id', '=', $id)->first();
         $studentsAttendance = Attendance::where('session_id', '=', $id)->get();
-        return view($this->viewName . 'edit', compact('rowSession','studentsAttendance'));
+        $round = Round::where('id', $rowSession->round_id)->first();
+        return view($this->viewName . 'edit', compact('rowSession', 'studentsAttendance', 'round'));
     }
 
     /**

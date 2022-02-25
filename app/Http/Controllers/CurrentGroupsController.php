@@ -3,19 +3,23 @@
 namespace App\Http\Controllers;
 
 use App\Models\Branch;
+use App\Models\Cashbox;
 use App\Models\Course;
 use App\Models\Exeption;
 use App\Models\Exeption_type;
 use App\Models\Followup_center;
 use App\Models\Followup_type;
+use App\Models\Invoice;
+use App\Models\Payment_type;
 use App\Models\Room;
 use App\Models\Round;
 use App\Models\Round_day;
+use App\Models\Student;
 use App\Models\Student_round;
 use App\Models\Trainer;
 use Illuminate\Database\QueryException;
 use Illuminate\Http\Request;
-
+use Illuminate\Database\Eloquent\Collection;
 class CurrentGroupsController extends Controller
 {
 
@@ -95,10 +99,49 @@ class CurrentGroupsController extends Controller
         $exeptionTypes = Exeption_type::all();
         $followups = Followup_center::where('round_id', $id)->where('followup_flag', 2)->get();
         $fullowupTypes=Followup_type::all();
-        return view($this->viewName . 'view', compact('row', 'branches', 'rooms', 'courses', 'roundSS', 'trainers', 'students', 'roundDays', 'exeptions', 'exeptionTypes', 'followups','fullowupTypes'));
+        $finance=Invoice::where('round_id',$id)->get();
+        $filterd_rounds = array();
+        $finance = Invoice::where('round_id', $id)->whereIn('payment_type_id',[101,102])->get();
+        $roundsinFin = Invoice::where('round_id', $id)->whereNotNull('student_id')->whereIn('payment_type_id',[101,102])->distinct()->pluck('student_id');
+
+        foreach ($roundsinFin as $stud) {
+            $obj = new Collection();
+            $obj->roundsFinance = array();
+            // $obj->course=new Round();
+            foreach ($finance as $fin) {
+                if ($fin->student_id === $stud) {
+
+                    array_push($obj->roundsFinance, $fin);
+
+                }
+            }
+            $roundsinFin = Invoice::where('student_id', $stud)->where('round_id', $id)->whereIn('payment_type_id',[101,102])->orderBy("created_at", "Desc")->first();
+            $obj->roundNow =$id;
+            $obj->courseStudent = Student::where('id', $stud)->first();
+
+            array_push($filterd_rounds, $obj);
+
+        }
+        return view($this->viewName . 'view', compact('row', 'branches', 'rooms', 'courses', 'roundSS', 'trainers', 'students', 'roundDays', 'exeptions', 'exeptionTypes', 'followups','fullowupTypes','finance','filterd_rounds'));
 
     }
 
+    public function showFinData($id){
+        $row = Invoice::where('id', '=', $id)->first();
+        $branches = Branch::whereHas('cashbox', function ($query) use ($row) {
+            $query->where('id', $row->cashbox_id);
+        })->get();
+        $types = Payment_type::all();
+        $cashboxes = Cashbox::all();
+
+        $courses = Course::whereHas('rounds', function ($query) use ($row) {
+            $query->where('id', $row->round_id);
+        })->get();
+        $rounds = Round::where('status_id', '!=', 2)->get();
+        $students = Student_round::where('round_id', '=', $row->round_id)->get();
+        return view($this->viewName . 'showFin', compact('row', 'types', 'branches', 'rounds', 'students', 'cashboxes', 'courses'));
+
+    }
     /**
      * Show the form for editing the specified resource.
      *

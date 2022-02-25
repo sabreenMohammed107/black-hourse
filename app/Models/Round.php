@@ -17,6 +17,8 @@ class Round extends Model
         'round_no',
         'start_date',
         'end_date',
+        'rent_room_fees',
+        'certificate_fees',
         'fees',
         'discount_per',
         'fees_after_discount',

@@ -4,8 +4,11 @@ namespace App\Http\Controllers;
 
 use App\Models\Attendance;
 use App\Models\Branch;
+use App\Models\Cashbox;
 use App\Models\Course;
 use App\Models\Day;
+use App\Models\Financial_entry;
+use App\Models\Invoice;
 use App\Models\Room;
 use App\Models\Round;
 use App\Models\Round_day;
@@ -16,6 +19,7 @@ use App\Models\Trainer;
 use Carbon\Carbon;
 use Illuminate\Database\QueryException;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 
 class RoundController extends Controller
@@ -110,7 +114,7 @@ class RoundController extends Controller
             // Enable foreign key checks!
             DB::statement('SET FOREIGN_KEY_CHECKS=1;');
             return redirect()->route($this->routeName . 'index')->with('flash_success', 'تم الحفظ بنجاح');
-        } catch (\Throwable $e) {
+        } catch (\Throwable$e) {
             DB::rollback();
 
             return redirect()->back()->withInput()->with('flash_danger', $e->getMessage());
@@ -219,7 +223,7 @@ class RoundController extends Controller
             // Enable foreign key checks!
             DB::statement('SET FOREIGN_KEY_CHECKS=1;');
             return redirect()->route($this->routeName . 'index')->with('flash_success', 'تم الحفظ بنجاح');
-        } catch (\Throwable $e) {
+        } catch (\Throwable$e) {
             DB::rollback();
 
             return redirect()->back()->withInput()->with('flash_danger', $e->getMessage());
@@ -256,103 +260,173 @@ class RoundController extends Controller
         {
             // Disable foreign key checks!
             DB::statement('SET FOREIGN_KEY_CHECKS=0;');
-        $row = Round::where('id', '=', $request->get('round_id'))->first();
-        //get number of course days
-        $course = Course::where('id', $row->course_id)->first();
-        $totalminutes = 0;
-        $noofDay = 0;
-        $days = [
-            'ww',
-            'Monday',
-            'Tuesday',
-            'Wednesday',
-            'Thursday',
-            'Friday',
-            'Saturday',
-            'Sunday',
-        ];
-        $startDay = Carbon::parse($row->start_date);
-        $courseDays = [];
-        array_push($courseDays, Carbon::parse($row->start_date));
+            $row = Round::where('id', '=', $request->get('round_id'))->first();
+            //get number of course days
+            $course = Course::where('id', $row->course_id)->first();
+            $totalminutes = 0;
+            $noofDay = 0;
+            $days = [
+                'ww',
+                'Monday',
+                'Tuesday',
+                'Wednesday',
+                'Thursday',
+                'Friday',
+                'Saturday',
+                'Sunday',
+            ];
+            $startDay = Carbon::parse($row->start_date);
+            $courseDays = [];
+            array_push($courseDays, Carbon::parse($row->start_date));
 
-        $xx = $startDay->format('N');
-        while ($course->course_hours > 0) {
+            $xx = $startDay->format('N');
+            while ($course->course_hours > 0) {
 
-            foreach (Round_day::where('round_id', $request->get('round_id'))->orderByRaw(DB::raw("FIELD(day_id, $xx)"))->get() as $index => $timer) {
+                foreach (Round_day::where('round_id', $request->get('round_id'))->orderByRaw(DB::raw("FIELD(day_id, $xx)"))->get() as $index => $timer) {
 
-                $startTime = Carbon::parse($timer->from);
-                $endTime = Carbon::parse($timer->to);
-                $duration = $endTime->diffInMinutes($startTime);
-                $totalminutes = $duration;
-
-                $str = 'next ' . $days[$timer->day_id];
-
-                $noOfHourse = date('H:i', mktime(0, $totalminutes));
-                $course->course_hours = $course->course_hours - (int) $noOfHourse;
-                if (($course->course_hours / (int) $noOfHourse) >= 1 || ($course->course_hours % (int) $noOfHourse) > 0) {
+                    $startTime = Carbon::parse($timer->from);
+                    $endTime = Carbon::parse($timer->to);
+                    $duration = $endTime->diffInMinutes($startTime);
+                    $totalminutes = $duration;
 
                     $str = 'next ' . $days[$timer->day_id];
 
-                    $startDay->modify($str);
+                    $noOfHourse = date('H:i', mktime(0, $totalminutes));
+                    $course->course_hours = $course->course_hours - (int) $noOfHourse;
+                    if (($course->course_hours / (int) $noOfHourse) >= 1 || ($course->course_hours % (int) $noOfHourse) > 0) {
 
-                    // Output
+                        $str = 'next ' . $days[$timer->day_id];
 
-                    $end_date = Carbon::parse($startDay->format('Y-m-d'));
+                        $startDay->modify($str);
 
-                    array_push($courseDays, $end_date);
+                        // Output
+
+                        $end_date = Carbon::parse($startDay->format('Y-m-d'));
+
+                        array_push($courseDays, $end_date);
+
+                    }
 
                 }
 
             }
 
-        }
-
 //update end Date
-        $row->update(['end_date' => $end_date,'status_id'=>2]);
-        // dd(count($courseDays));
-        //sessions
+            $row->update(['end_date' => $end_date, 'status_id' => 2]);
+            // dd(count($courseDays));
+            //sessions
 
-        $Counter = 1;
+            $Counter = 1;
 
-        for ($x = 0; $x < count($courseDays); $x++) {
+            for ($x = 0; $x < count($courseDays); $x++) {
 
-            $Session = new Session();
-            $Session->round_id = $request->get('round_id');
-            $Session->session_no = $Counter;
-            $Session->session_date = $courseDays[$x];
-            $Session->is_done = 0;
-            $Session->is_cancel = 0;
-            $Session->save();
+                $Session = new Session();
+                $Session->round_id = $request->get('round_id');
+                $Session->session_no = $Counter;
+                $Session->session_date = $courseDays[$x];
+                $Session->is_done = 0;
+                $Session->is_cancel = 0;
+                $Session->save();
 
-            $Counter++;
-        }
-
-        //attendance
-        $students = Student_round::where('round_id', $request->get('round_id'))->pluck('id');
-        $sessions = Session::where('round_id', $request->get('round_id'))->pluck('id');
-
-        foreach ($sessions as $session) {
-            foreach ($students as $stuent) {
-                $attendance = new Attendance();
-                $attendance->session_id = $session;
-                $attendance->student_round_id = $stuent;
-                $attendance->is_atend = 0;
-                $attendance->room_rent_fees = 0;
-                $attendance->room_rent_paid = 0;
-                $attendance->certificate_fees = 0;
-                $attendance->certificate_paid = 0;
-                $attendance->save();
+                $Counter++;
             }
 
-        }
-        DB::commit();
-        // Enable foreign key checks!
-        DB::statement('SET FOREIGN_KEY_CHECKS=1;');
-        return redirect()->route($this->routeName . 'index')->with('flash_success', 'تم الحفظ بنجاح');
-    } catch (\Throwable $e) {
-        DB::rollback();
+            //attendance
+            $students = Student_round::where('round_id', $request->get('round_id'))->pluck('id');
+            $sessions = Session::where('round_id', $request->get('round_id'))->pluck('id');
 
-        return redirect()->back()->withInput()->with('flash_success', $e->getMessage());
+            foreach ($sessions as $session) {
+                foreach ($students as $stuent) {
+                    $attendance = new Attendance();
+                    $attendance->session_id = $session;
+                    $attendance->student_round_id = $stuent;
+                    $attendance->is_atend = 0;
+                    $attendance->room_rent_fees = 0;
+                    $attendance->room_rent_paid = 0;
+                    $attendance->certificate_fees = 0;
+                    $attendance->certificate_paid = 0;
+                    $attendance->save();
+                }
+
+            }
+            DB::commit();
+            // Enable foreign key checks!
+            DB::statement('SET FOREIGN_KEY_CHECKS=1;');
+            return redirect()->route($this->routeName . 'index')->with('flash_success', 'تم الحفظ بنجاح');
+        } catch (\Throwable$e) {
+            DB::rollback();
+
+            return redirect()->back()->withInput()->with('flash_success', $e->getMessage());
+        }
     }
+
+    public function payStudentRound(Request $request)
+    {
+        try
+        {
+            // Disable foreign key checks!
+            DB::statement('SET FOREIGN_KEY_CHECKS=0;');
+            //save invoice
+            $payedInvoice = Invoice::where('student_id', $request->get('student_id'))->whereIn('payment_type_id',[101,102])->where('round_id', $request->get('round_id'))->first();
+            $input = [
+                'invoice_no' => $request->get('invoice_no'),
+                'invoice_date' => Carbon::parse($request->get('invoice_date')),
+                'student_id' => $request->get('student_id'),
+
+                'round_id' => $request->get('round_id'),
+                'total_required_fees' => $request->get('total_required_fees'),
+
+                'total_fees_new' => $request->get('total_fees_new'),
+                'user_id' => Auth::user()->id,
+                // 'cashbox_id' =>Cashbox::where('branch_id',$request->get('branch_id'))->first()->id,
+                'notes' => $request->get('notes'),
+                'system_notes' => "test",
+            ];
+            $cashbox = Cashbox::where('branch_id', $request->get('branch_id'))->first();
+            if ($cashbox) {
+                $input['cashbox_id'] = $cashbox->id;
+            }
+            if ($payedInvoice) {
+                $input['payment_type_id'] =102;
+            } else {
+                $input['payment_type_id'] =101;
+            }
+            // dd($input);
+            $invoice = Invoice::create($input);
+            //save finance_entry
+
+            $finance = new Financial_entry();
+
+            $finance->start_balance_date = Carbon::parse($request->get('invoice_date'));
+            // $finance->enrty_type_id = ;
+            $finance->positive = $request->get('total_fees_new');
+            $finance->negative = 0;
+            $finance->invoice_id = $invoice->id;
+            $finance->notes = $request->get('notes');
+            $finance->save();
+//update student
+            $student = Student::where('id', $request->get('student_id'))->first();
+            $total_fees_new = Invoice::where('student_id', $request->get('student_id'))->where('round_id',  $request->get('round_id'))->whereIn('payment_type_id',[101,102])->sum('total_fees_new');
+
+            if ($total_fees_new == $invoice->total_required_fees) {
+                $student->request_status_id = 1;
+                $student->update(); // dd(1);
+
+            } else {
+                $student->request_status_id = 2;
+                $student->update();
+                // dd($student);
+
+            }
+            DB::commit();
+            // Enable foreign key checks!
+            DB::statement('SET FOREIGN_KEY_CHECKS=1;');
+            return redirect()->back()->withInput()->with('flash_success', 'تم الحفظ بنجاح');
+            // return redirect()->route($this->routeName . 'index')->with('flash_success', 'تم الحفظ بنجاح');
+        } catch (\Throwable$e) {
+            DB::rollback();
+
+            return redirect()->back()->withInput()->with('flash_danger', $e->getMessage());
+        }
     }
 }

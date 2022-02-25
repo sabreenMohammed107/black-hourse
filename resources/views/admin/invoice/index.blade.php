@@ -28,6 +28,7 @@
                                     <th>رقم المجموعة</th>
                                     <th>المبلغ المطلوب </th>
                                     <th>المبلغ المدفوع</th>
+                                    <th>إجمالى المبلغ المدفوع</th>
                                     <th>المبلغ المتبقى</th>
                                     <!--<th>ملاحظات</th>-->
                                     <th>الاجراءات</th>
@@ -46,8 +47,9 @@
                                     <td>{{$row->round->course->name ?? ''}}</td>
                                     <td>{{$row->round->round_no ?? ''}}</td>
                                     <td>{{$row->total_required_fees}}</td>
-                                    <td>{{$row->total_paid_before}}</td>
                                     <td>{{$row->total_fees_new}}</td>
+                                    <td>{{$row->total_paid_before}}</td>
+                                    <td>{{$row->total_required_fees - $row->total_paid_before}}</td>
                                     <td>
                                         <div class="btn-group">
                                             <a href="{{ route('invoice.edit', $row->id) }}" class="btn btn-default"><i class="fa fa-edit" title="تعديل"></i></a>

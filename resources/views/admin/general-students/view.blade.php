@@ -206,7 +206,7 @@
                                             {{-- مالية --}}
                                             <div class="tab-pane fade" id="custom-tabs-one-3" role="tabpanel"
                                                 aria-labelledby="custom-tabs-one-3-tab">
-                                                {{-- @include('admin.current-groups.students') --}}
+                                                @include('admin.general-students.finance')
                                                 <hr />
 
 

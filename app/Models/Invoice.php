@@ -16,7 +16,7 @@ class Invoice extends Model
     'deploma_id',
     'round_id',
     'total_required_fees',
-    'total_paid_before',
+
     'total_fees_new',
     'user_id',
     'cashbox_id',
