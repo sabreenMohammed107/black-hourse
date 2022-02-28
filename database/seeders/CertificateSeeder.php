@@ -24,9 +24,13 @@ class CertificateSeeder extends Seeder
 
 
         ];
+
    // for update data commit olde and open new and udate admin user
-        foreach ($status as $type) {
-        Certificate_status::create(['certificate_status' => $type]);
-        }
+        // foreach ($status as $type) {
+        Certificate_status::create(['id'=>1,'certificate_status' => 'لم يتم حجزها']);
+        Certificate_status::create(['id'=>2,'certificate_status' => 'جاهزة للطباعه']);
+        Certificate_status::create(['id'=>3,'certificate_status' => 'تم طبعها']);
+        Certificate_status::create(['id'=>4,'certificate_status' => 'تم الالغاء']);
+        // }
     }
 }

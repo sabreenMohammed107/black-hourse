@@ -48,4 +48,8 @@ class Student extends Model
 {
     return $this->hasOne('App\Models\Followup_center')->latest();
 }
+
+public function courses(){
+    return $this->belongsToMany('App\Models\Course', 'crm_courses','student_id','course_id');
+}
 }

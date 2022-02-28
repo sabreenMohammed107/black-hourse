@@ -24,6 +24,8 @@ class CreateStudentRoundsTable extends Migration
             $table->foreignId('status_id')->nullable();
             $table->foreignId('certificate_status_id')->nullable();
             $table->text('note')->nullable();
+
+            $table->integer('deploma_flag')->nullable();
             $table->timestamps();
         });
     }

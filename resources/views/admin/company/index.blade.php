@@ -39,7 +39,7 @@
                                         <div class="btn-group">
                                             <a href="{{ route('company.show', $row->id) }}" class="btn btn-default"><i class="fa fa-eye" title="عرض"></i></a>
                                             <a href="{{ route('company.edit', $row->id) }}" class="btn btn-default"><i class="fa fa-edit" title="تعديل"></i></a>
-                                            <a href="{{$row->crm_link}}" target="_blank" class="btn btn-default"><i class="fa fa-link" title="رابط التسجيل"></i></a>
+                                            <a href="{{ route('crm-company', $row->id.'/' . $row->slug) }}" target="_blank" class="btn btn-default"><i class="fa fa-link" title="رابط التسجيل"></i></a>
                                             <button type="button" class="btn btn-default" data-toggle="modal" data-target="#del{{ $row->id }}"><i class="fa fa-times" title="حذف"></i></button>
                                         </div>
                                     </td>

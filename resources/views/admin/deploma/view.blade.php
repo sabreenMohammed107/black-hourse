@@ -124,6 +124,21 @@
 
         @endsection
 
+
+
+
         @section('scripts')
 
-        @endsection
+        <script>
+               function myFunction(index) {
+            var total_required_fees = $("#total_required_fees"+index).val();
+            var total_fees_new = Number($("#total_fees_new"+index).val()) + Number($("#total_paid_before"+index).val());
+
+            $('#remain'+index).val(total_required_fees-total_fees_new);
+        }
+            $(function () {
+
+
+            })
+        </script>
+                @endsection

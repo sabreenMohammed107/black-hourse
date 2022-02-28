@@ -7,6 +7,8 @@ use App\Models\Branch;
 use App\Models\Cashbox;
 use App\Models\Course;
 use App\Models\Day;
+use App\Models\Deploma_course;
+use App\Models\Deploma_student;
 use App\Models\Financial_entry;
 use App\Models\Invoice;
 use App\Models\Room;
@@ -140,8 +142,23 @@ class RoundController extends Controller
         $allStudents = Student::all();
         $days = Day::all();
         $roundDays = Round_day::where('round_id', $id)->get();
+        $stDepolma = array();
+        $deplomaStudents = Deploma_student::all();
+        $deplomaCourse = Deploma_course::all();
+$counrt=0;
+        foreach ($deplomaStudents as $obj) {
+            foreach ($deplomaCourse as $obj2) {
 
-        return view($this->viewName . 'view', compact('row', 'branches', 'rooms', 'courses', 'roundSS', 'trainers', 'students', 'allStudents', 'days', 'roundDays'));
+            if ($obj2->course_id == $row->course_id && $obj2->deploma_id== $obj->deploma_id) {
+
+                array_push($stDepolma, $obj);
+                $counrt++;
+            }
+        }
+
+        }
+        // dd($stDepolma);
+        return view($this->viewName . 'view', compact('row', 'branches', 'rooms', 'courses', 'roundSS', 'trainers', 'students', 'allStudents', 'days', 'roundDays','stDepolma'));
     }
 
     /**
@@ -159,6 +176,7 @@ class RoundController extends Controller
         $trainers = Trainer::all();
         $days = Day::all();
         $roundDays = Round_day::where('round_id', $id)->get();
+
         return view($this->viewName . 'edit', compact('row', 'branches', 'rooms', 'courses', 'trainers', 'roundDays', 'days'));
     }
 
@@ -367,9 +385,14 @@ class RoundController extends Controller
             // Disable foreign key checks!
             DB::statement('SET FOREIGN_KEY_CHECKS=0;');
             //save invoice
-            $payedInvoice = Invoice::where('student_id', $request->get('student_id'))->whereIn('payment_type_id',[101,102])->where('round_id', $request->get('round_id'))->first();
+            $payedInvoice = Invoice::where('student_id', $request->get('student_id'))->whereIn('payment_type_id', [101, 102])->where('round_id', $request->get('round_id'))->first();
+            $max = Invoice::latest('invoice_no')->first();
+
+        // $max = ($max != null && $max != 0) ? $max : 0;
+        $max = ($max != null) ? intval($max['code']) : 0;
+        $max++;
             $input = [
-                'invoice_no' => $request->get('invoice_no'),
+                'invoice_no' => $max,
                 'invoice_date' => Carbon::parse($request->get('invoice_date')),
                 'student_id' => $request->get('student_id'),
 
@@ -387,9 +410,9 @@ class RoundController extends Controller
                 $input['cashbox_id'] = $cashbox->id;
             }
             if ($payedInvoice) {
-                $input['payment_type_id'] =102;
+                $input['payment_type_id'] = 102;
             } else {
-                $input['payment_type_id'] =101;
+                $input['payment_type_id'] = 101;
             }
             // dd($input);
             $invoice = Invoice::create($input);
@@ -406,7 +429,7 @@ class RoundController extends Controller
             $finance->save();
 //update student
             $student = Student::where('id', $request->get('student_id'))->first();
-            $total_fees_new = Invoice::where('student_id', $request->get('student_id'))->where('round_id',  $request->get('round_id'))->whereIn('payment_type_id',[101,102])->sum('total_fees_new');
+            $total_fees_new = Invoice::where('student_id', $request->get('student_id'))->where('round_id', $request->get('round_id'))->whereIn('payment_type_id', [101, 102])->sum('total_fees_new');
 
             if ($total_fees_new == $invoice->total_required_fees) {
                 $student->request_status_id = 1;

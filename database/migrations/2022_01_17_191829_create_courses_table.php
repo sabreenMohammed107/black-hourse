@@ -21,7 +21,7 @@ class CreateCoursesTable extends Migration
             $table->string('image')->nullable();
             $table->string('pdf_file')->nullable();
             $table->double('course_hours',8,2)->nullable();
-            $table->string('crm_link')->unique()->nullable();
+            $table->string('crm_link')->nullable();
             $table->text('note')->nullable();
             $table->timestamps();
         });

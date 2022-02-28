@@ -25,8 +25,12 @@ class StatusSeeder extends Seeder
 
         ];
    // for update data commit olde and open new and udate admin user
-        foreach ($status as $type) {
-            Request_status::create(['request_status' => $type]);
-        }
+        // foreach ($status as $type) {
+
+            Request_status::create(['id'=>1,'request_status' => 'سدد بالكامل']);
+            Request_status::create(['id'=>2,'request_status' => 'سداد جزئى']);
+            Request_status::create(['id'=>3,'request_status' => 'لم يسدد']);
+            Request_status::create(['id'=>4,'request_status' => 'فى الانتظار']);
+        // }
     }
 }

@@ -35,6 +35,7 @@ class CreateRoundsTable extends Migration
             $table->double('fees',11,2)->nullable();
             $table->decimal('discount_per',3,0)->nullable();
             $table->double('fees_after_discount',11,2)->nullable();
+
             $table->timestamps();
         });
     }

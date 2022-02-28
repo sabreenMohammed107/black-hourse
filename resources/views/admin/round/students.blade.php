@@ -3,6 +3,8 @@
 
     <h3 class="card-title float-sm-left mb-2"><a data-toggle="modal" data-target="#add" class="btn btn-success">إضافة</a>
     </h3>
+    <h3 class="card-title float-sm-left mb-2"><a data-toggle="modal" data-target="#add_deploma" class="btn btn-success">إضافة طالب من دبلومة</a>
+    </h3>
     <table id="table" data-toggle="table" data-pagination="true" data-search="true" data-resizable="true"
         data-cookie="true" data-show-export="true" data-locale="ar-SA" style="direction: rtl">
         <thead>
@@ -29,8 +31,12 @@
                     <td>{{ $row->student->email ?? '' }}</td>
                     <td>{{ $row->student->education ?? '' }}</td>
                     <td>{{ $row->student->job ?? '' }}</td>
-                    <td>{{ $row->student->status->request_status ?? '' }}
-                        @if ($row->student && $row->student->request_status_id == 3)
+                    <td>
+                        @if ( $row->deploma_flag==1)
+                            الحجز تابع دبلومة
+                        @else
+                        {{ $row->status->request_status ?? '' }}
+                        @if ( $row->status_id == 3)
                             {{-- {{ $row->status->request_status }} --}}
                             <div class="btn-group">
 
@@ -41,7 +47,7 @@
                                 </button>
                             </div>
                         @endif
-                        @if ($row->student && $row->student->request_status_id  == 2)
+                        @if ($row->status_id == 2)
                             {{-- {{ $row->status->request_status }} --}}
                             <div class="btn-group">
 
@@ -50,6 +56,9 @@
                                 </button>
                             </div>
                         @endif
+                        @endif
+
+
                     </td>
                     <td>{{ $row->student->note ?? '' }}</td>
                     <td>
@@ -85,13 +94,13 @@
                                         <input type="hidden" name="branch_id" value="{{ $roundSS->branch_id }}">
 
                                         <div class="row">
-                                            <div class="col-sm-6">
+                                            {{-- <div class="col-sm-6">
                                                 <div class="form-group">
                                                     <label for="">رقم الفاتورة</label>
                                                     <input type="text" name="invoice_no"
                                                         value="{{ old('invoice_no') }}" class="form-control" id="">
                                                 </div>
-                                            </div>
+                                            </div> --}}
                                             <div class="col-sm-6">
                                                 <div class="form-group">
                                                     <label for="">إسم الدورة</label>
@@ -189,7 +198,51 @@
     </table>
 
 </div>
+<!-- Add Student Deploma Modal -->
+<div class="modal fade dir-rtl" id="add_deploma" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header bg-light">
+                <h5 class="modal-title" id="exampleModalLabel">إضافة طالب</h5>
+                <button type="button" class="close m-0 p-0 text-white" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <form action="{{ route('add-student-deploma-round') }}" method="post">
+                @csrf
+                <div class="modal-body text-center">
+                    <h3><i class="fa fa-edit "></i></h3>
+                    <h4>تأكيد إضافة الطالب </h4>
+                    <input type="hidden" name="round_id" value="{{ $roundSS->id }}">
+                    <div class="row">
+                        <div class="col-md-8">
+                            <div class="form-group">
+                                <label>رقم هوية الطالب</label>
+                                <select class="form-control select2" name="student_id" style="width: 100%;">
+                                    <option selected="selected">...</option>
+                                    @foreach ($stDepolma as $all)
+                                        <option value="{{ $all->student_id }}">{{ $all->student->name ?? '' }}</option>
+                                    @endforeach
 
+
+                                </select>
+                            </div>
+                            <!-- /.form-group -->
+                        </div>
+                        <div class="col-md-4 mt-2">
+                            <br />
+
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">إلغاء</button>
+                    <button type="submit" class="btn btn-success">حفظ</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
 <!-- Add Student Modal -->
 <div class="modal fade dir-rtl" id="add" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
     <div class="modal-dialog" role="document">

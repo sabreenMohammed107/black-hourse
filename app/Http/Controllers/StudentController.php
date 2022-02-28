@@ -6,9 +6,10 @@ use App\Models\Round;
 use App\Models\Student;
 use App\Models\Student_round;
 use Carbon\Carbon;
+use Illuminate\Database\QueryException;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Database\QueryException;
+
 class StudentController extends Controller
 {
     protected $object;
@@ -64,10 +65,10 @@ class StudentController extends Controller
             // Disable foreign key checks!
             DB::statement('SET FOREIGN_KEY_CHECKS=0;');
             $input = $request->except(['_token', 'round_id']);
-$input['request_status_id']=3;
-            $student=Student::create($input);
+            $input['request_status_id'] = 3;
+            $student = Student::create($input);
 
-            $round = Round::where('id',$request->get('round_id'))->first();
+            $round = Round::where('id', $request->get('round_id'))->first();
             $values = [
                 'round_id' => $request->get('round_id'),
                 'student_id' => $student->id,
@@ -83,7 +84,7 @@ $input['request_status_id']=3;
             // Enable foreign key checks!
             DB::statement('SET FOREIGN_KEY_CHECKS=1;');
             return redirect()->route($this->routeName . 'show', $request->get('round_id'))->with('flash_success', 'تم الحفظ بنجاح');
-        } catch (\Throwable $e) {
+        } catch (\Throwable$e) {
             DB::rollback();
 
             return redirect()->back()->withInput()->with('flash_danger', $e->getMessage());
@@ -159,10 +160,26 @@ $input['request_status_id']=3;
             'total_fees' => $round->fees,
             'total_paid' => 0,
 
+        ];
+
+        Student_round::create($input);
+        return redirect()->route($this->routeName . 'show', $request->get('round_id'))->with('flash_success', 'تم الحفظ بنجاح');
+    }
+
+    public function addStudentDepolma(Request $request)
+    {
+        $round = Round::where('id', $request->get('round_id'))->first();
+        $input = [
+            'round_id' => $request->get('round_id'),
+            'student_id' => $request->get('student_id'),
+            // 'status_id' => 3,
+            'register_date' => Carbon::now()->toDateTimeString(),
+            'deploma_flag' => 1,
 
         ];
 
         Student_round::create($input);
         return redirect()->route($this->routeName . 'show', $request->get('round_id'))->with('flash_success', 'تم الحفظ بنجاح');
+
     }
 }

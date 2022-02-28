@@ -44,12 +44,12 @@
             </div>
         </div>
         <div class="row">
-            <div class="col-sm-4">
+            {{-- <div class="col-sm-4">
                 <div class="form-group">
                     <label for="">رقم الفاتورة</label>
                     <input type="text" name="invoice_no" value="{{$row->invoice_no}}" class="form-control" id="">
                 </div>
-            </div>
+            </div> --}}
 
             <div class="col-sm-4">
                 <div class="form-group">

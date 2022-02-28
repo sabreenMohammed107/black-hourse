@@ -24,6 +24,12 @@ Route::resource('roles', 'App\Http\Controllers\RoleController');
 Route::resource('users', 'App\Http\Controllers\UserController');
 //company
 Route::resource('company', 'App\Http\Controllers\CompanyController');
+//crm-company
+Route::get('/crm-company/{id}/{slug?}', 'App\Http\Controllers\CompanyController@crm')->name('crm-company');
+//save-crm
+Route::POST('/crm', 'App\Http\Controllers\CompanyController@saveCrm')->name('crm');
+//saving-in-crm
+Route::GET('/saving-in-crm', 'App\Http\Controllers\CompanyController@saveCrm')->name('saving-in-crm');
 //branch
 Route::resource('branch', 'App\Http\Controllers\BranchController');
 //room
@@ -45,6 +51,9 @@ Route::resource('trainer', 'App\Http\Controllers\TrainerController');
 Route::resource('student', 'App\Http\Controllers\StudentController');
 //add-student-round
 Route::post('add-student-round', 'App\Http\Controllers\StudentController@addStudent')->name('add-student-round');
+//add-student-deploma-round
+Route::post('add-student-deploma-round', 'App\Http\Controllers\StudentController@addStudentDepolma')->name('add-student-deploma-round');
+
 //course-trainers
 Route::resource('course-trainers', 'App\Http\Controllers\CourseTrainersController');
 //course-rounds
@@ -61,6 +70,8 @@ Route::resource('deploma-student', 'App\Http\Controllers\DeplomaStudentControlle
 Route::post('add-student-deploma', 'App\Http\Controllers\DeplomaStudentController@addStudent')->name('add-student-deploma');
 //course-deploma
 Route::resource('course-deploma', 'App\Http\Controllers\CourseDeplomaController');
+//pay-student-deploma
+Route::post('pay-student-deploma', 'App\Http\Controllers\DeplomaController@payStudentDeploma')->name('pay-student-deploma');
 
 //current-groups
 

@@ -2,10 +2,15 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Branch;
 use App\Models\Company;
+use App\Models\Course;
+use App\Models\Student;
 use Illuminate\Http\Request;
 use Illuminate\Database\QueryException;
 use File;
+use Illuminate\Support\Facades\DB;
+use Carbon\Carbon;
 class CompanyController extends Controller
 {
     protected $object;
@@ -177,5 +182,46 @@ return redirect()->route($this->routeName.'index')->with('flash_success', 'تم 
           $file->move($uploadPath, $imageName);
 
           return $imageName;
+      }
+      public function crm($id){
+          $row=Company::where('id',$id)->first();
+          $courses=Course::all();
+          $branches=Branch::all();
+        return view($this->viewName . 'crm', compact('row','courses','branches'))->withCanonical($row->url);
+      }
+
+      public function saveCrm(Request $request){
+// dd($request->all());
+try
+{
+    // Disable foreign key checks!
+    DB::statement('SET FOREIGN_KEY_CHECKS=0;');
+    $input = [
+        'name'=>$request->get('name'),
+        'mobile'=>$request->get('mobile'),
+        'mobile2'=>$request->get('mobile2'),
+        'age'=>$request->get('age'),
+        'note'=>$request->get('note'),
+        'sale_fannel_id '=>1,
+        'company_id '=>$request->get('company_id'),
+        'register_date '=>Carbon::now(),
+    ];
+
+    $student = Student::create($input);
+    //save student branch
+    $student->branches()->attach($request->branch_id);
+    //save student course
+    $student->courses()->attach($request->course_id);
+    DB::commit();
+    // Enable foreign key checks!
+    DB::statement('SET FOREIGN_KEY_CHECKS=1;');
+    \Session::flash('flash_success', 'تم التسجيل بنجاح !');
+    return view($this->viewName . 'done');
+} catch (\Throwable$e) {
+    DB::rollback();
+    \Session::flash('flash_danger', 'حدث خطأ فى التسجيل !');
+    return view($this->viewName . 'done');
+    // return redirect()->back()->withInput()->with('flash_danger', $e->getMessage());
+}
       }
 }

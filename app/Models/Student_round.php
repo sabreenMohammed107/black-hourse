@@ -17,6 +17,7 @@ class Student_round extends Model
         'total_fees',
         'total_paid',
         'note',
+        'deploma_flag'
     ];
     public function student(){
         return $this->belongsTo('App\Models\Student', 'student_id');

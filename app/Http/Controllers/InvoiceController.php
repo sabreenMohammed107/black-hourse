@@ -82,8 +82,13 @@ class InvoiceController extends Controller
             // Disable foreign key checks!
             DB::statement('SET FOREIGN_KEY_CHECKS=0;');
             //save invoice
+            $max = Invoice::latest('invoice_no')->first();
+
+            // $max = ($max != null && $max != 0) ? $max : 0;
+            $max = ($max != null) ? intval($max['code']) : 0;
+            $max++;
             $input = [
-                'invoice_no' => $request->get('invoice_no'),
+                'invoice_no' => $max,
                 'invoice_date' => Carbon::parse($request->get('invoice_date')),
                 'student_id' => $request->get('student_id'),
                 'payment_type_id' => $request->get('payment_type_id'),
@@ -168,8 +173,13 @@ class InvoiceController extends Controller
             // Disable foreign key checks!
             DB::statement('SET FOREIGN_KEY_CHECKS=0;');
 //save invoice
+$max = Invoice::latest('invoice_no')->first();
+
+// $max = ($max != null && $max != 0) ? $max : 0;
+$max = ($max != null) ? intval($max['code']) : 0;
+$max++;
             $input = [
-                'invoice_no' => $request->get('invoice_no'),
+                'invoice_no' => $max,
                 'invoice_date' => Carbon::parse($request->get('invoice_date')),
                 'student_id' => $request->get('student_id'),
                 'payment_type_id' => $request->get('payment_type_id'),

@@ -95,8 +95,14 @@ class AttendanceController extends Controller
             $cashbox = Cashbox::where('branch_id', $studentRound->round->branch_id)->first();
 
             // save rent
+            $max = Invoice::latest('invoice_no')->first();
+
+        // $max = ($max != null && $max != 0) ? $max : 0;
+        $max = ($max != null) ? intval($max['code']) : 0;
+        $max++;
+
             $invoice = new Invoice();
-            $invoice->invoice_no = $i;
+            $invoice->invoice_no = $max;
             $invoice->invoice_date = Carbon::parse($session->session_date);
             $invoice->student_id = $studentRound->student_id;
             $invoice->round_id = $studentRound->round_id;
@@ -109,8 +115,10 @@ class AttendanceController extends Controller
             if ($cashbox) {
                 $invoice->cashbox_id = $cashbox->id;
             }
+            if ($request->get('room_rent_paid' . $i) && $request->get('room_rent_paid' . $i) > 0) {
+                $invoice->save();
+            }
 
-            $invoice->save();
 
             //save finance_entry
 
@@ -121,19 +129,26 @@ class AttendanceController extends Controller
             $finance->negative = 0;
             $finance->invoice_id = $invoice->id;
             $finance->notes = $request->get('notes' . $i);
-            $finance->save();
+            if ($request->get('room_rent_paid' . $i) && $request->get('room_rent_paid' . $i) > 0) {
+                $finance->save();
+            }
+
 //save certificate
-$existInvoice=Invoice::where('student_id', $studentRound->student_id)->where('round_id', $studentRound->round_id)->where('payment_type_id',104)->orderBy("created_at", "Desc")->first();
+$existInvoice=Invoice::where('student_id', $studentRound->student_id)->where('round_id', $studentRound->round_id)->where('payment_type_id',104)->first();
 if($existInvoice){
 
 }else{
+    $max = Invoice::latest('invoice_no')->first();
+
+    // $max = ($max != null && $max != 0) ? $max : 0;
+    $max = ($max != null) ? intval($max['code']) : 0;
+    $max++;
     $invoice = new Invoice();
-    $invoice->invoice_no = $i;
+    $invoice->invoice_no = $max;
     $invoice->invoice_date = Carbon::parse($session->session_date);
     $invoice->student_id = $studentRound->student_id;
     $invoice->round_id = $studentRound->round_id;
-    $invoice->total_required_fees = $request->get('room_rent_fees' . $i);
-    $invoice->total_fees_new = $request->get('room_rent_paid' . $i);
+    $invoice->total_required_fees = $request->get('certificate_fees' . $i);
     $invoice->user_id = Auth::user()->id;
     $invoice->payment_type_id = 104;
     $invoice->notes = $request->get('notes' . $i);
@@ -142,7 +157,11 @@ if($existInvoice){
         $invoice->cashbox_id = $cashbox->id;
     }
 
-    $invoice->save();
+    if ($request->get('certificate_paid' . $i) && $request->get('certificate_paid' . $i) > 0) {
+        $invoice->total_fees_new = $request->get('certificate_paid' . $i);
+        $invoice->save();
+    }
+
 
     //save finance_entry
 
@@ -153,7 +172,10 @@ if($existInvoice){
     $finance->negative = 0;
     $finance->invoice_id = $invoice->id;
     $finance->notes = $request->get('notes' . $i);
-    $finance->save();
+    if ($request->get('certificate_paid' . $i) && $request->get('certificate_paid' . $i) > 0) {
+        $finance->save();
+    }
+
 
 }
 

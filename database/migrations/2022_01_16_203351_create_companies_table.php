@@ -19,7 +19,7 @@ class CreateCompaniesTable extends Migration
             $table->string('logo')->nullable();
             $table->string('phone')->nullable();
             $table->text('address')->nullable();
-            $table->string('crm_link')->unique();
+            $table->string('crm_link')->nullable();
             $table->integer('active')->nullable();
             $table->timestamps();
         });
