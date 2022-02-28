@@ -186,7 +186,7 @@ return redirect()->route($this->routeName.'index')->with('flash_success', 'تم 
       public function crm($id){
           $row=Company::where('id',$id)->first();
           $courses=Course::all();
-          $branches=Branch::where('company_id',$id)->first();
+          $branches=Branch::where('company_id',$id)->get();
         return view($this->viewName . 'crm', compact('row','courses','branches'))->withCanonical($row->url);
       }
 
