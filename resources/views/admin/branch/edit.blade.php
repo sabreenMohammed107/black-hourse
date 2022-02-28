@@ -28,7 +28,7 @@
                             <div class="row">
                     <div class="col-sm-6">
                         <div class="form-group">
-                            <label for="">اسم الشركة</label>
+                            <label for="">اسم الفرع</label>
                             <input type="text" name="name" value="{{$row->name}}" class="form-control" id="">
                         </div>
                     </div>
@@ -52,7 +52,7 @@
 
                     <div class="col-md-6">
                         <div class="form-group">
-                            <label for="">لوجو الشركة</label>
+                            <label for="">صورة الفرع</label>
                             <div class="custom-file">
                                 <input type="file" name="img" class="custom-file-input" id="customFile">
                             </div>

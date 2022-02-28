@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta http-equiv="x-ua-compatible" content="ie=edge">
 
-    <title>SHESURE</title>
+    <title>Back Hourse</title>
     @if(isset($canonical))
       <link rel="canonical" href="{{ $canonical }}" />
       @endif
@@ -55,7 +55,23 @@
              padding-right: 10px !important;
 
          }
-
+         .modal-danger .modal-body{
+            background-color: #fff !important;
+            color:#000 !important;
+            text-align: center
+         }
+         .modal-danger .modal-footer{
+            background-color: #fff !important;
+            color:#000 !important;
+         }
+         .btn-outline {
+    border: 1px solid #000;
+    background: transparent;
+    color: #000;
+}
+.modal-danger .modal-footer{
+    border-color: #000;
+}
 
     </style>
 </head>

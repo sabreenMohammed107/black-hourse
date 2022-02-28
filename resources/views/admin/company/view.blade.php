@@ -7,7 +7,7 @@
     <div class="col-md-10">
             <div class="box box-primary">
         <div class="box-header">
-          <h3 class="box-title">تعديل</h3>
+          <h3 class="box-title">{{$row->name}}</h3>
         </div>
 
 
@@ -45,12 +45,7 @@
                             <input type="text" readonly name="address" value="{{$row->address}}" class="form-control" id="">
                         </div>
                     </div>
-                    <div class="col-sm-6">
-                        <div class="form-group">
-                            <label for="">رابط ال crm</label>
-                            <input type="url" readonly name="crm_link" value="{{$row->crm_link}}" class="form-control" id="">
-                        </div>
-                    </div>
+
                     <div class="col-md-6">
                         <div class="form-group">
                             <label for="">لوجو الشركة</label>

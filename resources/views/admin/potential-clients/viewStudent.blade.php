@@ -168,9 +168,10 @@
                                         <p>حذف جميع البيانات ؟</p>
                                     </div>
                                     <div class="modal-footer">
-                                        <button type="button" class="btn btn-outline pull-left"
+                                        <button type="submit" class="btn btn-outline pull-left">موافق </button>
+
+                                        <button type="button" class="btn btn-outline "
                                             data-dismiss="modal">الغاء</button>
-                                        <button type="submit" class="btn btn-outline">حفظ </button>
                                     </div>
                                 </div>
                             </form>

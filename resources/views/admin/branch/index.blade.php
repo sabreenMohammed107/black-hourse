@@ -1,6 +1,6 @@
 @extends('layout.web')
 
-@section('title', 'الشركات')
+@section('title', 'الفروع')
 
 @section('content')
 
@@ -20,7 +20,7 @@
                                     <th data-field="state" data-checkbox="false"></th>
                                     <th data-field="id">#</th>
                                     <th>اسم الفرع</th>
-                                    <th>لوجو الفرع</th>
+                                    <th>صورة الفرع</th>
                                     <th>اسم الشركة</th>
                                     <th>عنوان الشركة</th>
                                     <th>الاجراءات</th>
@@ -61,9 +61,10 @@
                                             <p>حذف جميع البيانات ؟</p>
                                         </div>
                                         <div class="modal-footer">
-                                            <button type="button" class="btn btn-outline pull-left"
+                                            <button type="submit" class="btn btn-outline pull-left">موافق </button>
+
+                                            <button type="button" class="btn btn-outline "
                                                 data-dismiss="modal">الغاء</button>
-                                            <button type="submit" class="btn btn-outline">حفظ </button>
                                         </div>
                                     </div>
                                 </form>

@@ -12,7 +12,7 @@
       <form method="POST" action="{{ route('login') }}">
         @csrf
 
-        <div class="input-group mb-3">
+        <div class="form-group mb-3">
             <input id="email" placeholder="البريد الإلكترونى" type="email" class="form-control @error('email') is-invalid @enderror" name="email" value="{{ old('email') }}" required autocomplete="email" autofocus>
 
             @error('email')
@@ -20,13 +20,13 @@
                     <strong>{{ $message }}</strong>
                 </span>
             @enderror
-          <div class="input-group-append">
-            <div class="input-group-text">
+          <div class="form-group-append">
+            <div class="form-group-text">
               <span class="fa fa-envelope"></span>
             </div>
           </div>
         </div>
-        <div class="input-group mb-3">
+        <div class="form-group mb-3">
             <input id="password" placeholder="كلمه المرور" type="password" class="form-control @error('password') is-invalid @enderror" name="password" required autocomplete="current-password">
 
             @error('password')
@@ -34,8 +34,8 @@
                     <strong>{{ $message }}</strong>
                 </span>
             @enderror
-          <div class="input-group-append">
-            <div class="input-group-text">
+          <div class="form-group-append">
+            <div class="form-group-text">
               <span class="fa fa-lock"></span>
             </div>
           </div>

@@ -45,7 +45,7 @@
 
                     <div class="col-md-6">
                         <div class="form-group">
-                            <label for="">لوجو الفرع</label>
+                            <label for="">صورة الفرع</label>
                             <div class="custom-file">
                                 <input type="file" name="img" class="custom-file-input" id="customFile">
                             </div>

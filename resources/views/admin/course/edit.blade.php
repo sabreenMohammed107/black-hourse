@@ -7,7 +7,7 @@
     <div class="col-md-10">
             <div class="box box-primary">
         <div class="box-header">
-          <h3 class="box-title">اضافة</h3>
+          <h3 class="box-title">تعديل - {{$row->name}}</h3>
         </div>
 
 

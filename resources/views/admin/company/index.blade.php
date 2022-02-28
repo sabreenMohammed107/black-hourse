@@ -50,8 +50,8 @@
                                 <form action="{{ route('company.destroy', $row->id) }}"  method="POST" >
                                     @csrf
                                     @method('DELETE')
-                                    <div class="modal-content">
-                                        <div class="modal-header ">
+                                    <div class="modal-content bg-light" >
+                                        <div class="modal-header bg-light">
                                             <button type="button" class="close" data-dismiss="modal"
                                                 aria-label="Close"><span aria-hidden="true">&times;</span></button>
                                             <h5 class="modal-title" id="exampleModalLabel">تأكيد الحذف</h5>
@@ -62,9 +62,10 @@
                                             <p>حذف جميع البيانات ؟</p>
                                         </div>
                                         <div class="modal-footer">
-                                            <button type="button" class="btn btn-outline pull-left"
+                                            <button type="submit" class="btn btn-outline pull-left">موافق </button>
+
+                                            <button type="button" class="btn btn-outline "
                                                 data-dismiss="modal">الغاء</button>
-                                            <button type="submit" class="btn btn-outline">حفظ </button>
                                         </div>
                                     </div>
                                 </form>

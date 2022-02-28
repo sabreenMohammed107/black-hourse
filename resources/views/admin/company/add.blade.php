@@ -38,12 +38,7 @@
                             <input type="text" name="address" value="{{old('address')}}" class="form-control" id="">
                         </div>
                     </div>
-                    <div class="col-sm-6">
-                        <div class="form-group">
-                            <label for="">رابط ال crm</label>
-                            <input type="url" name="crm_link" value="{{old('crm_link')}}" class="form-control" id="">
-                        </div>
-                    </div>
+
                     <div class="col-md-6">
                         <div class="form-group">
                             <label for="">لوجو الشركة</label>

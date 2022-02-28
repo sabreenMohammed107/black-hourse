@@ -29,14 +29,14 @@
 
              <li class="active treeview">
                  <a href="{{ url('/home') }}">
-                     <i class="fa fa-dashboard"></i> <span>الرئيسية</span> <i class="fa fa-angle-left pull-right"></i>
+                     <i class="fa fa-dashboard"></i> <span>داشبورد</span>
                  </a>
                  {{-- <ul class="treeview-menu">
             <li class="active"><a href="index.html"><i class="fa fa-circle-o"></i> Dashboard v1</a></li>
             <li><a href="index2.html"><i class="fa fa-circle-o"></i> Dashboard v2</a></li>
           </ul> --}}
              </li>
-             <li class="header">بيانات أساسية </li>
+             {{-- <li class="header">بيانات أساسية </li> --}}
              <li class="treeview">
                  <a href="#">
                      <i class="fa fa-files-o"></i>
@@ -49,7 +49,7 @@
                      <li><a href="{{ route('branch.index') }}"><i class="fa fa-circle-o"></i> الفروع </a></li>
 
                      <li><a href="{{ route('users.index') }}"><i class="fa fa-circle-o"></i> المستخدمين </a></li>
-                     <li><a href="{{ route('roles.index') }}"><i class="fa fa-circle-o"></i> الأدوار </a></li>
+                     {{-- <li><a href="{{ route('roles.index') }}"><i class="fa fa-circle-o"></i> الأدوار </a></li> --}}
                      <li><a href="{{ route('room.index') }}"><i class="fa fa-circle-o"></i> القاعات </a></li>
                      <li><a href="{{ route('course.index') }}"><i class="fa fa-circle-o"></i> الدورات </a></li>
                      <li><a href="{{ route('trainer.index') }}"><i class="fa fa-circle-o"></i> المدربين </a></li>
@@ -107,7 +107,7 @@
 
 
 
-             <li class="header">ماليات</li>
+             {{-- <li class="header">ماليات</li> --}}
 
              <li class="treeview">
                  <a href="#">
