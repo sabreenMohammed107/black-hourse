@@ -7,7 +7,7 @@
         <div class="col-md-10">
             <div class="box box-primary px-5">
                 <div class="box-header">
-                    <h3 class="box-title"> بيانات الدورة</h3>
+                    <h3 class="box-title">{{ $row->name }}  - بيانات الدورة</h3>
                 </div>
 
 

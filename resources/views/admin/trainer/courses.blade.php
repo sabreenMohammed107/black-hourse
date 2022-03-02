@@ -44,7 +44,7 @@
                                  <div class="modal modal-danger" id="delcourse{{ $course->id }}" tabindex="-1" role="dialog"
                                     aria-labelledby="exampleModalLabel" aria-hidden="true">
                                     <div class="modal-dialog" role="document">
-                                    <form action="{{ route('course-trianer-delete', $row->id) }}"  method="POST" >
+                                    <form action="{{ route('course-trianer-delete', $course->id) }}"  method="POST" >
                                         @csrf
                                         @method('DELETE')
                                         <div class="modal-content">

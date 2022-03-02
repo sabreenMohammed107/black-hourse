@@ -41,7 +41,7 @@
                                     <td>{{$row->address ?? ''}}</td>
                                     <td>{{$row->email ?? ''}}</td>
                                     <td> <a  id="downloadCurrent" href="{{ asset('uploads/trainers')}}/{{$row->cv_pdf ?? ''}}" download="" class="btn btn-default"><i class="fa fa-download" title="download"></i>
-                                        {{$row->cv_pdf ?? ''}}</a></td>
+                                        </a>{{$row->cv_pdf ?? ''}}</td>
                                     <td><img src="{{ asset('uploads/trainers') }}/{{$row->image ?? ''}}" width="80" height="80" class="img-table"/></td>
 
                                     <td>{!! $row->notes ?? ''!!}</td>

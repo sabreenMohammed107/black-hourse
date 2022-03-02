@@ -20,11 +20,22 @@
                     @csrf
 
                     <div class="box-body">
-
+                        <div class="col-sm-6">
+                            <div class="form-group">
+                                <label for=""> رقم المجموعة</label>
+                                <input type="text" name="round_no" value="{{ $row->round_no }}" class="form-control" id="">
+                            </div>
+                        </div>
+                        <div class="col-sm-6">
+                            <div class="form-group">
+                                <label for="">  عدد الساعات</label>
+                                <input type="text"  readonly value="{{ $row->course->course_hours }}" class="form-control" id="">
+                            </div>
+                        </div>
                         <div class="col-sm-6">
                             <div class="form-group">
                                 <label for="">اسم الفرع</label>
-                                <select name="branch_id" class="form-control" id="">
+                                <select name="branch_id" class="form-control dynamic" id="branch_id">
 
                                     @foreach ($branches as $type)
                                         <option value="{{ $type->id }}"
@@ -38,7 +49,7 @@
                         <div class="col-sm-6">
                             <div class="form-group">
                                 <label for=""> رقم القاعة</label>
-                                <select name="room_id" class="form-control" id="">
+                                <select name="room_id" class="form-control" id="room_id">
 
                                     @foreach ($rooms as $type)
                                         <option value="{{ $type->id }}"
@@ -51,7 +62,7 @@
                         <div class="col-sm-6">
                             <div class="form-group">
                                 <label for=""> اسم الدوره</label>
-                                <select name="course_id" class="form-control" id="">
+                                <select name="course_id" class="form-control course" id="course_id">
 
                                     @foreach ($courses as $type)
                                         <option value="{{ $type->id }}"
@@ -72,14 +83,15 @@
                         <div class="col-sm-6">
                             <div class="form-group">
                                 <label for="">تاريخ النهاية</label>
-                                <input type="date" name="end_date" value="{{ date('Y-m-d', strtotime($row->end_date)) }}"
+                                <input type="date" readonly name="end_date" @if($row->end_date) value="{{ date('Y-m-d', strtotime($row->end_date)) }}" @endif
                                     class="form-control" id="">
                             </div>
                         </div>
+
                         <div class="col-sm-6">
                             <div class="form-group">
                                 <label for=""> التكلفة</label>
-                                <input type="text" name="fees" value="{{ $row->fees }}" class="form-control" id="">
+                                <input type="text" name="fees" value="{{ $row->fees }}" class="form-control" id="fees">
                             </div>
                         </div>
                         <div class="col-sm-6">
@@ -91,7 +103,7 @@
                         </div>
                         <div class="col-sm-6">
                             <div class="form-group">
-                                <label for=""> إيجار القاعة</label>
+                                <label for=""> إيجار القاعة اليومي</label>
                                 <input type="text" name="rent_room_fees" value="{{ $row->rent_room_fees }}"
                                     class="form-control" id="">
                             </div>
@@ -106,7 +118,7 @@
                         <div class="col-sm-6">
                             <div class="form-group">
                                 <label for=""> اسم المدرب</label>
-                                <select name="trainer_id" class="form-control" id="">
+                                <select name="trainer_id" class="form-control" id="trainer_id">
 
                                     @foreach ($trainers as $type)
                                         <option value="{{ $type->id }}"
@@ -225,6 +237,54 @@
     @section('scripts')
 <script src="{{ asset('adminassets/Datasave.js') }}"></script>
 <script>
+    $(function () {
+    //branch
+ $('.dynamic').change(function() {
+
+
+var value = $(this).val();
+$.ajax({
+    url: "{{ route('dynamicRoundRoom.fetch') }}",
+    method: "get",
+    data: {
+        value: value,
+        // course:course
+    },
+    success: function(result) {
+        $('#room_id').html(result);
+
+    }
+
+})
+
+});
+
+//course
+$('.course').change(function() {
+
+
+var value = $(this).val();
+$.ajax({
+    url: "{{ route('dynamicRoundCourse.fetch') }}",
+    method: "get",
+    data: {
+        value: value,
+        // course:course
+    },
+    success: function(data) {
+        var result = $.parseJSON(data);
+        $('#trainer_id').html(result[0]);
+        $('#fees').val(result[1]);
+        $('#hours').val(result[2]);
+
+    }
+
+})
+
+});
+
+});
+
     var RoundDays = [];
 
 var Days = [];

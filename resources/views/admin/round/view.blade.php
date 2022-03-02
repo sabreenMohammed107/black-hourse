@@ -1,5 +1,9 @@
 @extends('layout.web')
-@section('title', ' المجموعات')
+@section('style')
+    <!-- Select2 -->
+    <link rel="stylesheet" href="{{ asset('adminassets/plugins/select2/css/select2.min.css') }}">
+    <link rel="stylesheet" href="{{ asset('adminassets/plugins/select2-bootstrap4-theme/select2-bootstrap4.min.css') }}">
+@endsection
 
 @section('content')
     <div class="row">
@@ -51,17 +55,31 @@
 
 
                                                         @csrf
-<input type="hidden" name="round_id" value="{{$row->id}}">
+                                                        <input type="hidden" name="round_id" value="{{ $row->id }}">
                                                         <div class="box-body">
+
                                                             <div class="col-sm-6 mb-2">
                                                             </div>
                                                             <div class="col-sm-6 mb-2">
-                                                                <button type="submit" class="btn btn-danger">بدا المجموعه</button>
+                                                                <button type="submit" class="btn btn-danger">بدا
+                                                                    المجموعه</button>
 
                                                                 <input type="text" class="form-control" value="فى الحجز">
 
                                                             </div>
                                                             <hr>
+                                                            <div class="col-sm-6">
+                                                                <div class="form-group">
+                                                                    <label for=""> رقم المجموعة</label>
+                                                                    <input type="text" name="round_no" value="{{ $row->round_no }}" class="form-control" id="">
+                                                                </div>
+                                                            </div>
+                                                            <div class="col-sm-6">
+                                                                <div class="form-group">
+                                                                    <label for="">  عدد الساعات</label>
+                                                                    <input type="text"  readonly value="{{ $row->course->course_hours }}" class="form-control" id="">
+                                                                </div>
+                                                            </div>
                                                             <div class="col-sm-6">
                                                                 <div class="form-group">
                                                                     <label for="">اسم الفرع</label>
@@ -78,7 +96,7 @@
 
                                                             <div class="col-sm-6">
                                                                 <div class="form-group">
-                                                                    <label for=""> رقم القاعة</label>
+                                                                    <label for=""> إيجار القاعة اليومي</label>
                                                                     <select name="room_id" class="form-control" id="">
 
                                                                         @foreach ($rooms as $type)
@@ -114,7 +132,7 @@
                                                             <div class="col-sm-6">
                                                                 <div class="form-group">
                                                                     <label for="">تاريخ النهاية</label>
-                                                                    <input type="date" name="end_date"
+                                                                    <input type="date" readonly name="end_date"
                                                                         value="{{ date('Y-m-d', strtotime($row->end_date)) }}"
                                                                         class="form-control" id="">
                                                                 </div>
@@ -138,14 +156,16 @@
                                                             <div class="col-sm-6">
                                                                 <div class="form-group">
                                                                     <label for=""> إيجار القاعة</label>
-                                                                    <input type="text" disabled name="rent_room_fees" value="{{ $row->rent_room_fees }}"
+                                                                    <input type="text" disabled name="rent_room_fees"
+                                                                        value="{{ $row->rent_room_fees }}"
                                                                         class="form-control" id="">
                                                                 </div>
                                                             </div>
                                                             <div class="col-sm-6">
                                                                 <div class="form-group">
                                                                     <label for=""> مبلغ الشهادة</label>
-                                                                    <input type="text" disabled name="certificate_fees" value="{{ $row->certificate_fees }}"
+                                                                    <input type="text" disabled name="certificate_fees"
+                                                                        value="{{ $row->certificate_fees }}"
                                                                         class="form-control" id="">
                                                                 </div>
                                                             </div>
@@ -174,7 +194,6 @@
 
                                                                         {{-- <option disabled value=""> أيام المجموعات </option> --}}
                                                                         @foreach ($roundDays as $index => $days)
-
                                                                             <option selected
                                                                                 value="{{ $days->day_id }},{{ $days->time }},{{ $days->to }}"
                                                                                 ondblclick="removeOpt({{ $index + 1 }})">
@@ -194,7 +213,7 @@
 
 
 
-                                                        <div class="w-100 my-1" id="added">
+                                                            <div class="w-100 my-1" id="added">
 
 
 
@@ -203,54 +222,66 @@
 
 
 
+
+                                                            </div>
+
+                                                            <!--  /Add Round days and times -->
 
                                                         </div>
 
-                                                        <!--  /Add Round days and times -->
-
+                                                        <!-- /.card-body -->
+                                                        <div class="box-footer">
+                                                            {{-- <button type="submit" class="btn btn-primary">حفظ</button> --}}
+                                                            <a href="{{ route('round.index') }}"
+                                                                class="btn btn-danger">إلغاء</a>
+                                                        </div>
+                                                    </form>
                                                 </div>
-
-                                                <!-- /.card-body -->
-                                                <div class="box-footer">
-                                                    {{-- <button type="submit" class="btn btn-primary">حفظ</button> --}}
-                                                    <a href="{{ route('round.index') }}" class="btn btn-danger">إلغاء</a>
-                                                </div>
-                                                </form>
                                             </div>
+
+                                            <div class="tab-pane fade" id="custom-tabs-one-2" role="tabpanel"
+                                                aria-labelledby="custom-tabs-one-2-tab">
+                                                @include('admin.round.students')
+                                                <hr />
+
+
+                                            </div>
+
+
+
+
                                         </div>
-
-                                        <div class="tab-pane fade" id="custom-tabs-one-2" role="tabpanel"
-                                            aria-labelledby="custom-tabs-one-2-tab">
-                                            @include('admin.round.students')
-                                            <hr />
-
-
-                                        </div>
-
-
-
-
                                     </div>
+                                    <!-- /.card -->
                                 </div>
-                                <!-- /.card -->
                             </div>
                         </div>
                     </div>
+                    <!-- /.card -->
                 </div>
-                <!-- /.card -->
             </div>
-        </div>
-        <!-- /.col -->
+            <!-- /.col -->
+        @endsection
 
-    @endsection
 
-    @section('scripts')
-<script>
-     function myFunction(index) {
-    var total_required_fees = $("#total_required_fees"+index).val();
-    var total_fees_new = Number($("#total_fees_new"+index).val()) + Number($("#total_paid_before"+index).val());
+        @section('scripts')
+            <!-- Select2 -->
+            <script src="{{ asset('adminassets/plugins/select2/js/select2.full.min.js') }}"></script>
+            <script>
+                function myFunction(index) {
+                    var total_required_fees = $("#total_required_fees" + index).val();
+                    var total_fees_new = Number($("#total_fees_new" + index).val()) + Number($("#total_paid_before" + index).val());
 
-    $('#remain'+index).val(total_required_fees-total_fees_new);
-}
-    </script>
-    @endsection
+                    $('#remain' + index).val(total_required_fees - total_fees_new);
+                }
+                $(function() {
+                    //Initialize Select2 Elements
+
+                    $('#student_id1').select2()
+                    //Initialize Select2 Elements
+                    $('.select2bs4').select2({
+                        theme: 'bootstrap4'
+                    })
+                });
+            </script>
+        @endsection

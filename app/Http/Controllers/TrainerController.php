@@ -144,7 +144,7 @@ return redirect()->route($this->routeName.'index')->with('flash_success', 'تم 
      */
     public function destroy($id)
     {
-        $row=Course::where('id',$id)->first();
+        $row=Trainer::where('id',$id)->first();
         // Delete File ..
         $file = $row->image;
         $file_name = public_path('uploads/trainers/' . $file);

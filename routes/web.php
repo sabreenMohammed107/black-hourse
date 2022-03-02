@@ -38,6 +38,12 @@ Route::get('/room/1/full-calender', 'App\Http\Controllers\RoomController@fullCal
 
 //round
 Route::resource('round', 'App\Http\Controllers\RoundController');
+
+//dynamicRoundRoom
+Route::get('dynamicRoundRoom/fetch', 'App\Http\Controllers\RoundController@fetchRoom')->name('dynamicRoundRoom.fetch');
+//dynamicRoundCourse.fetch
+Route::get('dynamicRoundCourse/fetch', 'App\Http\Controllers\RoundController@fetchCourse')->name('dynamicRoundCourse.fetch');
+
 //start Round
 Route::post('start-round', 'App\Http\Controllers\RoundController@startRound')->name('start-round');
 //pay-student-round

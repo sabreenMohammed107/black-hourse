@@ -183,10 +183,11 @@ return redirect()->route($this->routeName.'index')->with('flash_success', 'تم 
 
           return $imageName;
       }
+
       public function crm($id){
           $row=Company::where('id',$id)->first();
           $courses=Course::all();
-          $branches=Branch::where('company_id',$id)->get();
+          $branches=Branch::all();
         return view($this->viewName . 'crm', compact('row','courses','branches'))->withCanonical($row->url);
       }
 
@@ -202,11 +203,11 @@ try
         'mobile2'=>$request->get('mobile2'),
         'age'=>$request->get('age'),
         'note'=>$request->get('note'),
-        'sale_fannel_id '=>1,
-        'company_id '=>$request->get('company_id'),
-        'register_date '=>Carbon::now(),
+        'sale_fannel_id'=>1,
+        'company_id'=>$request->get('company_id'),
+        'register_date'=>Carbon::now(),
+        'status_id' => 3,
     ];
-
     $student = Student::create($input);
     //save student branch
     $student->branches()->attach($request->branch_id);

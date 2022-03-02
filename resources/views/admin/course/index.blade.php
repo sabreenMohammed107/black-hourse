@@ -22,8 +22,9 @@
                                     <th>اسم الدورة</th>
                                     <th> التكلفة</th>
                                     <th>الساعات</th>
-                                    <th>صورة</th>
                                     <th>pdf</th>
+                                    <th>صورة</th>
+
                                     <th>مجال الدورة</th>
                                     <th> ملاحظات</th>
                                     <th>الاجراءات</th>
@@ -38,7 +39,7 @@
                                     <td>{{$row->fees}}</td>
                                     <td>{{$row->course_hours ?? ''}}</td>
                                     <td> <a  id="downloadCurrent" href="{{ asset('uploads/courses')}}/{{$row->pdf_file ?? ''}}" download="" class="btn btn-default"><i class="fa fa-download" title="download"></i>
-                                        {{$row->pdf_file ?? ''}}</a></td>
+                                       </a> {{$row->pdf_file ?? ''}}</td>
                                     <td><img src="{{ asset('uploads/courses') }}/{{$row->image ?? ''}}" width="80" height="80" class="img-table"/></td>
                                     <td>{{$row->category ?? ''}}</td>
                                     <td>{!! $row->note ?? ''!!}</td>

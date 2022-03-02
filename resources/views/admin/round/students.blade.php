@@ -264,10 +264,10 @@
                         <div class="col-md-8">
                             <div class="form-group">
                                 <label>رقم هوية الطالب</label>
-                                <select class="form-control select2" name="student_id" style="width: 100%;">
+                                <select class="form-control select2" id="student_id1" name="student_id" style="width: 100%;">
                                     <option selected="selected">...</option>
                                     @foreach ($allStudents as $all)
-                                        <option value="{{ $all->id }}">{{ $all->name }}</option>
+                                        <option value="{{ $all->id }}">{{ $all->name }} / {{$all->mobile}}</option>
                                     @endforeach
 
 

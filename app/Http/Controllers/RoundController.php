@@ -6,6 +6,7 @@ use App\Models\Attendance;
 use App\Models\Branch;
 use App\Models\Cashbox;
 use App\Models\Course;
+use App\Models\Course_trainer;
 use App\Models\Day;
 use App\Models\Deploma_course;
 use App\Models\Deploma_student;
@@ -89,9 +90,10 @@ class RoundController extends Controller
 
             $input['start_date'] = Carbon::parse($request->get('start_date'));
 
-            $input['end_date'] = Carbon::parse($request->get('end_date'));
+            // $input['end_date'] = Carbon::parse($request->get('end_date'));
 
             // dd($arr[1]);
+            $input['fees_after_discount'] = $request->get('fees') - (($request->get('fees') * $request->get('discount_per')) / 100);
             $round = Round::create($input);
             $arr = [];
             if ($request->get('round_days')) {
@@ -145,20 +147,20 @@ class RoundController extends Controller
         $stDepolma = array();
         $deplomaStudents = Deploma_student::all();
         $deplomaCourse = Deploma_course::all();
-$counrt=0;
+        $counrt = 0;
         foreach ($deplomaStudents as $obj) {
             foreach ($deplomaCourse as $obj2) {
 
-            if ($obj2->course_id == $row->course_id && $obj2->deploma_id== $obj->deploma_id) {
+                if ($obj2->course_id == $row->course_id && $obj2->deploma_id == $obj->deploma_id) {
 
-                array_push($stDepolma, $obj);
-                $counrt++;
+                    array_push($stDepolma, $obj);
+                    $counrt++;
+                }
             }
-        }
 
         }
         // dd($stDepolma);
-        return view($this->viewName . 'view', compact('row', 'branches', 'rooms', 'courses', 'roundSS', 'trainers', 'students', 'allStudents', 'days', 'roundDays','stDepolma'));
+        return view($this->viewName . 'view', compact('row', 'branches', 'rooms', 'courses', 'roundSS', 'trainers', 'students', 'allStudents', 'days', 'roundDays', 'stDepolma'));
     }
 
     /**
@@ -198,7 +200,8 @@ $counrt=0;
 
             $input['start_date'] = Carbon::parse($request->get('start_date'));
 
-            $input['end_date'] = Carbon::parse($request->get('end_date'));
+            // $input['end_date'] = Carbon::parse($request->get('end_date'));
+            $input['fees_after_discount'] = $request->get('fees') - (($request->get('fees') * $request->get('discount_per')) / 100);
 
             $this->object::findOrFail($id)->update($input);
 
@@ -388,9 +391,9 @@ $counrt=0;
             $payedInvoice = Invoice::where('student_id', $request->get('student_id'))->whereIn('payment_type_id', [101, 102])->where('round_id', $request->get('round_id'))->first();
             $max = Invoice::latest('invoice_no')->first();
 
-        // $max = ($max != null && $max != 0) ? $max : 0;
-        $max = ($max != null) ? intval($max['code']) : 0;
-        $max++;
+            // $max = ($max != null && $max != 0) ? $max : 0;
+            $max = ($max != null) ? intval($max['code']) : 0;
+            $max++;
             $input = [
                 'invoice_no' => $max,
                 'invoice_date' => Carbon::parse($request->get('invoice_date')),
@@ -451,5 +454,46 @@ $counrt=0;
 
             return redirect()->back()->withInput()->with('flash_danger', $e->getMessage());
         }
+    }
+
+    public function fetchRoom(Request $request)
+    {
+        //
+        $data = [];
+
+        if (!empty($request->get('value'))) {
+
+            $data = Room::where('branch_id', '=', $request->get('value'))->get();
+        }
+
+        $output = '<option value="">.....إختر </option>';
+        foreach ($data as $row) {
+
+            $output .= '<option value="' . $row->id . '">' . $row->room_no . '</option>';
+        }
+
+        echo $output;
+    }
+
+    public function fetchCourse(Request $request)
+    {
+        //
+        $data = [];
+
+        if (!empty($request->get('value'))) {
+
+            $data = Course_trainer::where('course_id', '=', $request->get('value'))->get();
+        }
+
+        $output = '<option value="">.....إختر </option>';
+        foreach ($data as $row) {
+
+            $output .= '<option value="' . $row->trainer->id . '">' . $row->trainer->name ?? '' . '</option>';
+        }
+
+        $fees = Course::where('id', '=', $request->get('value'))->first()->fees;
+        $hours = Course::where('id', '=', $request->get('value'))->first()->course_hours;
+        // echo $output;
+        echo json_encode(array($output, $fees,$hours));
     }
 }
