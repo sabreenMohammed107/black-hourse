@@ -319,7 +319,7 @@ function addRoundDay() {
 
 
 
-//   $('#selecteddays').empty();
+  $('#selecteddays').empty();
 
   $.each(RoundDays,function(index,elem){
 
