@@ -72,7 +72,7 @@
 .btn-outline:hover, .btn-outline:focus, .btn-outline:active {
     border: 1px solid rgb(88, 2, 2);
     background: rgb(88, 2, 2);
-    color: #000;
+    color: #fff;
 }
 .modal-danger .modal-footer{
     border-color: #000;
