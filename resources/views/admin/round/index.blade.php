@@ -39,7 +39,7 @@
                                 @foreach ($rows as $index => $row)
                                 <tr>
                                     <?php
-                                    $roundDays = App\models\Round_day::where('round_id', $row->id)->get();
+                                    $roundDays = App\Models\Round_day::where('round_id', $row->id)->get();
                                 ?>
                                     <td></td>
                                     <td>{{ $index + 1 }}</td>
