@@ -339,10 +339,9 @@ function addRoundDay() {
 }
 function removeOpt(index) {
 
- alert(index);
 
-$('#selecteddays option')[index].remove();
-
+$('#selecteddays option')[index-1].remove();
+console.log(RoundDays);
   RoundDays.splice(index,1);
 
 // $('#selecteddays').empty();

@@ -173,7 +173,8 @@ class RoundController extends Controller
     {
         $row = Round::where('id', '=', $id)->first();
         $branches = Branch::all();
-        $rooms = Room::all();
+       // $rooms = Room::all();
+        $rooms=Room::where('branch_id','=',$row->branch_id)->get();
         $courses = Course::all();
         $trainers = Trainer::all();
         $days = Day::all();

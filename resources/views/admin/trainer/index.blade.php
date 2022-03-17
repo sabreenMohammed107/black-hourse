@@ -28,7 +28,7 @@
 
 
                                     <th> ملاحظات</th>
-                                    <th>الاجراءات</th>
+                                    <th >الاجراءات</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -45,7 +45,7 @@
                                     <td><img src="{{ asset('uploads/trainers') }}/{{$row->image ?? ''}}" width="80" height="80" class="img-table"/></td>
 
                                     <td>{!! $row->notes ?? ''!!}</td>
-                                    <td>
+                                    <td >
                                         <div class="btn-group">
                                             <a href="{{ route('trainer.show', $row->id) }}" class="btn btn-default"><i class="fa fa-eye" title="عرض"></i></a>
                                             <a href="{{ route('trainer.edit', $row->id) }}" class="btn btn-default"><i class="fa fa-edit" title="تعديل"></i></a>

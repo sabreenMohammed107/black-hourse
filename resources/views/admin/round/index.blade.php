@@ -19,14 +19,18 @@
                                 <tr>
                                     <th data-field="state" data-checkbox="false"></th>
                                     <th data-field="id">#</th>
+                                    <th> رقم المجموعة</th>
+
                                     <th> الفرع</th>
                                     <th> رقم القاعة</th>
                                     <th>اسم الدورة</th>
                                     <th>المدرب</th>
                                     <th> تاريخ البداية</th>
-                                    <th>تاريخ النهاية</th>
+                                    {{-- <th>تاريخ النهاية</th> --}}
                                     <th>التكلفة</th>
                                     <th>الخصم %</th>
+                                    <th>التكلفة بعد الخصم</th>
+                                    <th>  المواعيد</th>
                                     <th>ملاحظات</th>
                                     <th>الاجراءات</th>
                                 </tr>
@@ -34,16 +38,28 @@
                             <tbody>
                                 @foreach ($rows as $index => $row)
                                 <tr>
+                                    <?php
+                                    $roundDays = App\models\Round_day::where('round_id', $row->id)->get();
+                                ?>
                                     <td></td>
                                     <td>{{ $index + 1 }}</td>
+                                    <td>{{$row->round_no ?? ''}}</td>
+
                                     <td>{{$row->branch->name ?? ''}}</td>
                                     <td>{{$row->room->room_no ?? ''}}</td>
                                     <td>{{$row->course->name ?? ''}}</td>
                                       <td>{{$row->trainer->name ?? ''}} </td>
                                     <td>{{date('d-m-Y', strtotime($row->start_date))}} </td>
-                                    <td>{{date('d-m-Y', strtotime($row->end_date))}}</td>
+                                    {{-- <td>{{date('d-m-Y', strtotime($row->end_date))}}</td> --}}
                                     <td> {{$row->fees}}</td>
-                                    <td>{{$row->discount_per}}</td>
+                                    <td>{{$row->discount_per}} %</td>
+                                    <td>{{$row->fees - ($row->fees*$row->discount_per/100)}}</td>
+                                    <td>
+                                        @foreach ($roundDays as $index=> $days)
+<label> {{$days->day->name ?? ''}} ,  {{date('H:i', strtotime($days->from))}} - </label>
+
+                        @endforeach
+                                    </td>
                                     <td>{!!$row->course->note ?? ''!!}</td>
                                     <td>
                                         <div class="btn-group">
