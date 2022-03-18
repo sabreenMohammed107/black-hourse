@@ -35,27 +35,26 @@
                         @if ( $row->deploma_flag==1)
                             الحجز تابع دبلومة
                         @else
-                        {{ $row->status->request_status ?? '' }}
-                        @if ( $row->status_id == 3)
-                            {{-- {{ $row->status->request_status }} --}}
-                            <div class="btn-group">
+                        {{ $row->student->status->request_status ?? '' }}
+                        @if ($row->student && $row->student->request_status_id == 3)
+                        <div class="btn-group">
 
 
-                                <button type="button" class="btn btn-warning text-warning" data-toggle="modal"
-                                    data-target="#student-payment{{ $row->student->id ?? '' }}"><i
-                                        class="fa fa-pound-sign" title="حذف"></i> دفع
-                                </button>
-                            </div>
-                        @endif
-                        @if ($row->status_id == 2)
-                            {{-- {{ $row->status->request_status }} --}}
-                            <div class="btn-group">
+                            <button type="button" class="btn btn-warning text-warning" data-toggle="modal"
+                                data-target="#student-payment{{ $row->student->id ?? '' }}"><i
+                                    class="fa fa-pound-sign" title="حذف"></i> دفع
+                            </button>
+                        </div>
+                    @endif
+                    @if ($row->student && $row->student->request_status_id == 2)
+                        <div class="btn-group">
 
-                                <button type="button" class="btn btn-success text-success" data-toggle="modal"
-                                    data-target="#student-payment{{ $row->student->id ?? '' }}"><i class="fa fa-pound-sign" title="حذف"></i> سداد
-                                </button>
-                            </div>
-                        @endif
+                            <button type="button" class="btn btn-success text-success" data-toggle="modal"
+                                data-target="#student-payment{{ $row->student->id ?? '' }}"><i
+                                    class="fa fa-pound-sign" title="حذف"></i> سداد
+                            </button>
+                        </div>
+                    @endif
                         @endif
 
 

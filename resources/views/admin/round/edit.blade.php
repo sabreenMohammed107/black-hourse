@@ -139,7 +139,7 @@
         <div class="col-md-12">
         <div class="form-group">
             <label for="note">أختر ايام المجموعه</label>
-            <select name="day_id" class="form-control" id="Days">
+            <select name="day_id" disabled class="form-control" id="Days">
 
                  @foreach ($days as $day)
 
@@ -166,7 +166,7 @@
             <div class="form-group">
                 <label for="note">من الساعة</label>
 
-                <input type="time" class="form-control d-block" id="Daytime">
+                <input type="time" disabled class="form-control d-block" id="Daytime">
 
 
             </div>
@@ -176,7 +176,7 @@
                 <div class="form-group">
 
                     <label for="note">  الى الساعة</label>
-                    <input type="time" class="form-control d-block" id="to">
+                    <input type="time" disabled class="form-control d-block" id="to">
 
                 </div>
 
@@ -184,12 +184,12 @@
             </div>
         <div class="form-group">
 
-            <button type="button" onclick="addRoundDay()" class="btn btn-dark"
+            <button type="button" onclick="addRoundDay()" disabled class="btn btn-dark"
                 style="margin:0px auto;">اضافة موعد </button>
 
         </div>
 
-        <h6>*انقر مرتين لحذف الموعد*</h6>
+        {{-- <h6>*انقر مرتين لحذف الموعد*</h6> --}}
 
 
 
@@ -200,7 +200,7 @@
                 {{-- <option disabled value=""> أيام المجموعات </option> --}}
                 @foreach ($roundDays as $index=> $days)
 
-                <option selected value="{{$days->day_id}},{{$days->time}},{{$days->to}}" ondblclick="removeOpt({{$index+1}})" >Day : {{$days->day->name ?? ''}}, At : {{$days->from}}</option>
+                <option selected value="{{$days->day_id}},{{$days->time}},{{$days->to}}" ondblclick="removeOpt({{$index}})" >Day : {{$days->day->name ?? ''}}, At : {{$days->from}}</option>
 @endforeach
             </select>
 
@@ -285,7 +285,7 @@ $.ajax({
 
 });
 
-    var RoundDays = [];
+var RoundDays = [];
 
 var Days = [];
 
@@ -332,23 +332,24 @@ function addRoundDay() {
 
   })
 
-  console.table(RoundDays);
+//   console.table(RoundDays);
 
-  console.table(Days);
+//   console.table(Days);
 
 }
 function removeOpt(index) {
 
+    alert(index);
 
-$('#selecteddays option')[index-1].remove();
-console.log(RoundDays);
+$('#selecteddays option')[index].remove();
+// console.log(RoundDays);
   RoundDays.splice(index,1);
 
-// $('#selecteddays').empty();
+//  $('#selecteddays').empty();
 
 $.each(RoundDays,function(index,elem){
 
-  // var elem = JSON.stringify(elem);
+//    var elem = JSON.stringify(elem);
 
   var option = '<option value="" ondblclick="removeOpt('+ index + ')">Day : (' + elem.DayText  + '), At : (' + elem.Time + ')</option>'
 
@@ -356,7 +357,7 @@ $.each(RoundDays,function(index,elem){
 
 })
 
-console.table(RoundDays);
+// console.table(RoundDays);
 
 }
 </script>
