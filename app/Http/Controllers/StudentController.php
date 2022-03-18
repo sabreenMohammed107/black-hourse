@@ -65,19 +65,38 @@ class StudentController extends Controller
             // Disable foreign key checks!
             DB::statement('SET FOREIGN_KEY_CHECKS=0;');
             $input = $request->except(['_token', 'round_id']);
-            $input['request_status_id'] = 3;
+            if ($request->get('wait') && $request->get('wait')==1) {
+                $input['request_status_id']=4;
+
+
+            } else {
+
+                $input['request_status_id']=3;
+
+
+            }
             $student = Student::create($input);
 
             $round = Round::where('id', $request->get('round_id'))->first();
             $values = [
                 'round_id' => $request->get('round_id'),
                 'student_id' => $student->id,
-                'status_id' => 3,
+                // 'status_id' => 3,
                 'register_date' => Carbon::now()->toDateTimeString(),
                 'total_fees' => $round->fees,
                 'total_paid' => 0,
 
             ];
+            if ($request->get('wait') && $request->get('wait')==1) {
+                $values['status_id']=4;
+
+
+            } else {
+
+                $values['status_id']=3;
+
+
+            }
 
             Student_round::create($values);
             DB::commit();
@@ -162,7 +181,21 @@ class StudentController extends Controller
 
         ];
 
+$student = Student::where('id', $request->get('student_id'))->first();
+if ($request->get('wait') && $request->get('wait')==1) {
+    $input['status_id']=4;
+    $student->request_status_id = 4;
+    $student->update(); // dd(1);
+
+} else {
+    $student->request_status_id = 3;
+    $input['status_id']=3;
+    $student->update();
+    // dd($student);
+
+}
         Student_round::create($input);
+
         return redirect()->route($this->routeName . 'show', $request->get('round_id'))->with('flash_success', 'تم الحفظ بنجاح');
     }
 
@@ -177,7 +210,19 @@ class StudentController extends Controller
             'deploma_flag' => 1,
 
         ];
+        $student = Student::where('id', $request->get('student_id'))->first();
+        if ($request->get('wait') && $request->get('wait')==1) {
+            // $input['status_id']=4;
+            $student->request_status_id = 4;
+            $student->update(); // dd(1);
 
+        } else {
+            $student->request_status_id = 3;
+            // $input['status_id']=3;
+            $student->update();
+            // dd($student);
+
+        }
         Student_round::create($input);
         return redirect()->route($this->routeName . 'show', $request->get('round_id'))->with('flash_success', 'تم الحفظ بنجاح');
 

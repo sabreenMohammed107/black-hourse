@@ -1,16 +1,31 @@
 <div class="box-body">
 
-<h3>
-    عدد الطلاب المشتركين :{{count($students)}}
-</h3>
-<h4>
-    سعة القاعة : {{$row->room->capacity ?? ''}} طالب
-</h4>
-    <h3 class="card-title float-sm-left mb-2"><a data-toggle="modal" data-target="#add" class="btn btn-success">إضافة</a>
+    <h3>
+        عدد الطلاب المشتركين :{{ count($students) }}
     </h3>
+    <h4>
+        سعة القاعة : {{ $row->room->capacity ?? '' }} طالب
+    </h4>
+    @if (count($students) >= $row->room->capacity)
+        <h3 class="card-title float-sm-left mb-2"><a data-toggle="modal" data-target="#add"
+                class="btn btn-warning">إنتظار</a>
+        </h3>
+    @else
+        <h3 class="card-title float-sm-left mb-2"><a data-toggle="modal" data-target="#add"
+                class="btn btn-success">إضافة</a>
+        </h3>
+    @endif
 
-    <h3 class="card-title float-sm-left mb-2"><a data-toggle="modal" data-target="#add_deploma" class="btn btn-success">إضافة طالب من دبلومة</a>
-    </h3>
+    @if (count($students) >= $row->room->capacity)
+        <h3 class="card-title float-sm-left mb-2"><a data-toggle="modal" data-target="#add_deploma"
+                class="btn btn-warning">إنتظار طالب من دبلومة</a>
+        </h3>
+    @else
+        <h3 class="card-title float-sm-left mb-2"><a data-toggle="modal" data-target="#add_deploma"
+                class="btn btn-success">إضافة طالب من دبلومة</a>
+        </h3>
+    @endif
+
     <table id="table" data-toggle="table" data-pagination="true" data-search="true" data-resizable="true"
         data-cookie="true" data-show-export="true" data-locale="ar-SA" style="direction: rtl">
         <thead>
@@ -34,33 +49,33 @@
                     <td>{{ $index + 1 }}</td>
                     <td>{{ $row->student->name ?? '' }}</td>
                     <td>{{ $row->student->mobile ?? '' }}</td>
-                    <td>{{date('d-m-Y', strtotime($row->register_date))}}</td>
+                    <td>{{ date('d-m-Y', strtotime($row->register_date)) }}</td>
                     <td>{{ $row->student->education ?? '' }}</td>
                     <td>{{ $row->student->job ?? '' }}</td>
                     <td>
-                        @if ( $row->deploma_flag==1)
+                        @if ($row->deploma_flag == 1)
                             الحجز تابع دبلومة
                         @else
-                        {{ $row->student->status->request_status ?? '' }}
-                        @if ($row->student && $row->student->request_status_id == 3)
-                        <div class="btn-group">
+                            {{ $row->student->status->request_status ?? '' }}
+                            @if ($row->student && $row->student->request_status_id == 3)
+                                <div class="btn-group">
 
 
-                            <button type="button" class="btn btn-warning text-warning" data-toggle="modal"
-                                data-target="#student-payment{{ $row->student->id ?? '' }}"><i
-                                    class="fa fa-pound-sign" title="حذف"></i> دفع
-                            </button>
-                        </div>
-                    @endif
-                    @if ($row->student && $row->student->request_status_id == 2)
-                        <div class="btn-group">
+                                    <button type="button" class="btn btn-warning text-warning" data-toggle="modal"
+                                        data-target="#student-payment{{ $row->student->id ?? '' }}"><i
+                                            class="fa fa-pound-sign" title="حذف"></i> دفع
+                                    </button>
+                                </div>
+                            @endif
+                            @if ($row->student && $row->student->request_status_id == 2)
+                                <div class="btn-group">
 
-                            <button type="button" class="btn btn-success text-success" data-toggle="modal"
-                                data-target="#student-payment{{ $row->student->id ?? '' }}"><i
-                                    class="fa fa-pound-sign" title="حذف"></i> سداد
-                            </button>
-                        </div>
-                    @endif
+                                    <button type="button" class="btn btn-success text-success" data-toggle="modal"
+                                        data-target="#student-payment{{ $row->student->id ?? '' }}"><i
+                                            class="fa fa-pound-sign" title="حذف"></i> سداد
+                                    </button>
+                                </div>
+                            @endif
                         @endif
 
 
@@ -88,8 +103,11 @@
                                 <form action="{{ route('pay-student-round') }}" method="post">
                                     @csrf
                                     <?php
-                                    $total_fees_new = App\Models\Invoice::where('student_id', $row->student->id)->where('round_id', $roundSS->id)->whereIn('payment_type_id',[101,102])->sum('total_fees_new');
-                            ?>
+                                    $total_fees_new = App\Models\Invoice::where('student_id', $row->student->id)
+                                        ->where('round_id', $roundSS->id)
+                                        ->whereIn('payment_type_id', [101, 102])
+                                        ->sum('total_fees_new');
+                                    ?>
                                     <div class="modal-body text-center">
                                         <h3><i class="fa fa-edit "></i></h3>
                                         <h4> تسجيل سداد </h4>
@@ -119,7 +137,8 @@
                                                     <input type="text" name="total_required_fees"
                                                         onchange="myFunction()"
                                                         value="{{ $roundSS->fees_after_discount ?? '' }}"
-                                                        class="form-control" id="total_required_fees{{$row->student->id}}" readonly>
+                                                        class="form-control"
+                                                        id="total_required_fees{{ $row->student->id }}" readonly>
                                                 </div>
                                             </div>
                                             <?php
@@ -133,22 +152,24 @@
                                                 <div class="form-group">
                                                     <label for="">إجمالى المدفوع</label>
                                                     <input type="text" name="total_paid_before"
-                                                        value="{{$total_fees_new ?? '' }}"
-                                                        class="form-control" id="total_paid_before{{$row->student->id}}" readonly>
+                                                        value="{{ $total_fees_new ?? '' }}" class="form-control"
+                                                        id="total_paid_before{{ $row->student->id }}" readonly>
                                                 </div>
                                             </div>
                                             <div class="col-sm-6">
                                                 <div class="form-group">
                                                     <label for="">القيمة المدفوعة</label>
-                                                    <input type="text"  name="total_fees_new" onchange="myFunction({{$row->student->id}})"
-                                                        class="form-control" id="total_fees_new{{$row->student->id}}">
+                                                    <input type="text" name="total_fees_new"
+                                                        onchange="myFunction({{ $row->student->id }})"
+                                                        class="form-control"
+                                                        id="total_fees_new{{ $row->student->id }}">
                                                 </div>
                                             </div>
                                             <div class="col-sm-6">
                                                 <div class="form-group">
                                                     <label for="">القيمة المتبقية</label>
-                                                    <input type="text" name="remain" class="form-control" id="remain{{$row->student->id}}"
-                                                        readonly>
+                                                    <input type="text" name="remain" class="form-control"
+                                                        id="remain{{ $row->student->id }}" readonly>
                                                 </div>
                                             </div>
                                             <div class="col-sm-6">
@@ -227,7 +248,8 @@
                                 <select class="form-control select2" name="student_id" style="width: 100%;">
                                     <option selected="selected">...</option>
                                     @foreach ($stDepolma as $all)
-                                        <option value="{{ $all->student_id }}">{{ $all->student->name ?? '' }}</option>
+                                        <option value="{{ $all->student_id }}">{{ $all->student->name ?? '' }}
+                                        </option>
                                     @endforeach
 
 
@@ -243,7 +265,12 @@
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-dismiss="modal">إلغاء</button>
-                    <button type="submit" class="btn btn-success">حفظ</button>
+                    @if (count($students) >= $roundSS->room->capacity)
+                        <input type="hidden" name="wait" value="1">
+                        <button type="submit" class="btn btn-warning">حفظ فى الانتظار</button>
+                    @else
+                        <button type="submit" class="btn btn-success">حفظ</button>
+                    @endif
                 </div>
             </form>
         </div>
@@ -269,10 +296,12 @@
                         <div class="col-md-8">
                             <div class="form-group">
                                 <label>رقم هوية الطالب</label>
-                                <select class="form-control select2" id="student_id1" name="student_id" style="width: 100%;">
+                                <select class="form-control select2" id="student_id1" name="student_id"
+                                    style="width: 100%;">
                                     <option selected="selected">...</option>
                                     @foreach ($allStudents as $all)
-                                        <option value="{{ $all->id }}">{{ $all->name }} / {{$all->mobile}}</option>
+                                        <option value="{{ $all->id }}">{{ $all->name }} / {{ $all->mobile }}
+                                        </option>
                                     @endforeach
 
 
@@ -290,7 +319,13 @@
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-dismiss="modal">إلغاء</button>
-                    <button type="submit" class="btn btn-success">حفظ</button>
+                    @if (count($students) >= $roundSS->room->capacity)
+                        <input type="hidden" name="wait" value="1">
+                        <button type="submit" class="btn btn-warning">حفظ فى الانتظار</button>
+                    @else
+                        <button type="submit" class="btn btn-success">حفظ</button>
+                    @endif
+
                 </div>
             </form>
         </div>
@@ -355,7 +390,12 @@
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-dismiss="modal">إلغاء</button>
-                    <button type="submit" class="btn btn-success">حفظ</button>
+                    @if (count($students) >= $roundSS->room->capacity )
+                        <input type="hidden" name="wait" value="1">
+                        <button type="submit" class="btn btn-warning">حفظ فى الانتظار</button>
+                    @else
+                        <button type="submit" class="btn btn-success">حفظ</button>
+                    @endif
                 </div>
             </form>
         </div>
