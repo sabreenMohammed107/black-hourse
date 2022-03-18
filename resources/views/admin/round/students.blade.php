@@ -1,8 +1,14 @@
 <div class="box-body">
 
-
+<h3>
+    عدد الطلاب المشتركين :{{count($students)}}
+</h3>
+<h4>
+    سعة القاعة : {{$row->room->capacity ?? ''}} طالب
+</h4>
     <h3 class="card-title float-sm-left mb-2"><a data-toggle="modal" data-target="#add" class="btn btn-success">إضافة</a>
     </h3>
+
     <h3 class="card-title float-sm-left mb-2"><a data-toggle="modal" data-target="#add_deploma" class="btn btn-success">إضافة طالب من دبلومة</a>
     </h3>
     <table id="table" data-toggle="table" data-pagination="true" data-search="true" data-resizable="true"
@@ -13,7 +19,7 @@
                 <th>#</th>
                 <th>اسم الطالب</th>
                 <th>موبايل</th>
-                <th>ايميل</th>
+                <th>تاريخ التسجيل</th>
                 <th>دراسة</th>
                 <th>وظيفة</th>
                 <th>حالة الحجز</th>
@@ -28,7 +34,7 @@
                     <td>{{ $index + 1 }}</td>
                     <td>{{ $row->student->name ?? '' }}</td>
                     <td>{{ $row->student->mobile ?? '' }}</td>
-                    <td>{{ $row->student->email ?? '' }}</td>
+                    <td>{{date('d-m-Y', strtotime($row->register_date))}}</td>
                     <td>{{ $row->student->education ?? '' }}</td>
                     <td>{{ $row->student->job ?? '' }}</td>
                     <td>
