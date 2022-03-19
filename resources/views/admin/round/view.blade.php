@@ -3,7 +3,127 @@
     <!-- Select2 -->
     <link rel="stylesheet" href="{{ asset('adminassets/plugins/select2/css/select2.min.css') }}">
     <link rel="stylesheet" href="{{ asset('adminassets/plugins/select2-bootstrap4-theme/select2-bootstrap4.min.css') }}">
-@endsection
+<style>
+/* Variables */
+/* Table Settings */
+.nestedTable {
+  width: 100%;
+  table-layout: fixed;
+  border-collapse: collapse;
+}
+.nestedTable th {
+  background: #424242;
+  color: #ffffff;
+  padding: 2px;
+}
+.nestedTable td,
+.nestedTable th {
+  text-align: center;
+}
+.nestedTable .tinyCol {
+  width: 2.5%;
+}
+.nestedTable .smallCol {
+  width: 5%;
+}
+.nestedTable .mediumCol {
+  width: 15%;
+}
+.nestedTable .largeCol {
+  width: 20%;
+}
+.nestedTable .xlargeCol {
+  width: 25%;
+}
+.nestedTable .header {
+  font-weight: 800;
+}
+.nestedTable .pending {
+  color: #722f37;
+  font-weight: 800;
+  font-style: italic;
+}
+.nestedTable tr {
+  background-color: #ddd;
+  border: 1px solid #c8c3c4;
+}
+@media only screen and (min-width: 767px) {
+  .nestedTable tr:nth-child(3n+1) {
+    background-color: #ddd;
+    border: none;
+  }
+}
+
+.display-none {
+  display: none;
+}
+
+.showMore {
+  color: #424242;
+  text-decoration: none;
+}
+.showMore:hover {
+  color: #424242;
+  text-decoration: none;
+  cursor: pointer;
+}
+ @media only screen and (max-width: 767px) {
+  td:nth-of-type(n):before {
+    content: attr(data-label);
+  }
+
+  tr:nth-child(6n+1), tr:nth-child(6n+3) {
+    background-color: #ddd;
+  }
+
+  .hideOnMobile {
+    position: absolute;
+    top: -9999px;
+    left: -9999px;
+    display: none;
+  }
+
+  .nestedTable .spacer,
+tr .spacer {
+    display: none;
+  }
+
+  .nestedTable table,
+.nestedTable thead,
+.nestedTable tbody,
+.nestedTable th,
+.nestedTable td,
+.nestedTable tr {
+    display: block;
+  }
+  .nestedTable thead tr {
+    position: absolute;
+    top: -9999px;
+    left: -9999px;
+  }
+  .nestedTable td {
+    border: none;
+    border-bottom: 1px solid #c8c3c4;
+    position: relative;
+    padding-left: 50%;
+  }
+  .nestedTable td:before {
+    position: absolute;
+    left: 6px;
+    width: 45%;
+    white-space: nowrap;
+    font-weight: 800;
+  }
+  .nestedTable .tinyCol,
+.nestedTable .smallCol,
+.nestedTable .mediumCol,
+.nestedTable .largeCol,
+.nestedTable .xlargeCol {
+    width: auto;
+  }
+}
+</style>
+    @endsection
 
 @section('content')
     <div class="row">
@@ -282,6 +402,21 @@
                     $('.select2bs4').select2({
                         theme: 'bootstrap4'
                     })
+
+
+                    $(".showMore").click(function(e) {
+                        var tt=Number($(this).attr('data-inv'))+1;
+  var tr = $(this).parent().parent().nextAll(':lt('+tt+')');
+      $(this).toggleClass('fa-plus-circle fa-minus-circle')
+  if (tr.is(".display-none")) {
+
+    tr.removeClass('display-none');
+   }
+else {
+    tr.addClass('display-none');
+  }
+
+})
                 });
             </script>
         @endsection

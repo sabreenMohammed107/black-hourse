@@ -141,7 +141,8 @@ class RoundController extends Controller
         $courses = Course::all();
         $trainers = Trainer::all();
         $students = Student_round::where('round_id', $id)->get();
-        $allStudents = Student::all();
+        $notStudent=Student_round::where('round_id', $id)->pluck('student_id');
+        $allStudents = Student::whereNotIn('id',$notStudent)->get();
         $days = Day::all();
         $roundDays = Round_day::where('round_id', $id)->get();
         $stDepolma = array();
@@ -434,16 +435,24 @@ class RoundController extends Controller
 //update student
             $student = Student::where('id', $request->get('student_id'))->first();
             $total_fees_new = Invoice::where('student_id', $request->get('student_id'))->where('round_id', $request->get('round_id'))->whereIn('payment_type_id', [101, 102])->sum('total_fees_new');
-
-            if ($total_fees_new == $invoice->total_required_fees) {
+            if ( $invoice->total_required_fees - $total_fees_new  <= 0) {
                 $student->request_status_id = 1;
                 $student->update(); // dd(1);
+                $sudent_round = Student_round::where('round_id', '=', $request->get('round_id'))->where('student_id', '=', $request->get('student_id'))->first();
+                if($sudent_round){
+                    $sudent_round->status_id = 1;
+                    $sudent_round->update();
+                }
 
             } else {
                 $student->request_status_id = 2;
                 $student->update();
                 // dd($student);
-
+                $sudent_round = Student_round::where('round_id', '=', $request->get('round_id'))->where('student_id', '=', $request->get('student_id'))->first();
+                if($sudent_round){
+                    $sudent_round->status_id = 2;
+                    $sudent_round->update();
+                }
             }
             DB::commit();
             // Enable foreign key checks!

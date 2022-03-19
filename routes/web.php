@@ -57,6 +57,8 @@ Route::resource('trainer', 'App\Http\Controllers\TrainerController');
 Route::resource('student', 'App\Http\Controllers\StudentController');
 //add-student-round
 Route::post('add-student-round', 'App\Http\Controllers\StudentController@addStudent')->name('add-student-round');
+//connect-student-round
+Route::post('connect-student-round', 'App\Http\Controllers\StudentController@connectStudent')->name('connect-student-round');
 //add-student-deploma-round
 Route::post('add-student-deploma-round', 'App\Http\Controllers\StudentController@addStudentDepolma')->name('add-student-deploma-round');
 

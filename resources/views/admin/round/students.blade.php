@@ -26,7 +26,7 @@
         </h3>
     @endif
 
-    <table id="table" data-toggle="table" data-pagination="true" data-search="true" data-resizable="true"
+    <table id="table" data-toggle="table" data-pagination="false" data-search="true" data-resizable="true"
         data-cookie="true" data-show-export="true" data-locale="ar-SA" style="direction: rtl">
         <thead>
             <tr>
@@ -44,9 +44,18 @@
         </thead>
         <tbody>
             @foreach ($students as $index => $row)
-                <tr>
+                <?php
+                $invoice = App\Models\Invoice::where('student_id', '=', $row->student_id)->get();
+                ?>
+                <tr class="base-row">
                     <td></td>
-                    <td>{{ $index + 1 }}</td>
+                    <td>{{ $index + 1 }}
+
+                        @if ($invoice->count() > 0)
+                            <i class="showMore fa fa-plus-circle" data-inv="{{ $invoice->count() }}"
+                                aria-hidden="true"></i>
+                        @endif
+                    </td>
                     <td>{{ $row->student->name ?? '' }}</td>
                     <td>{{ $row->student->mobile ?? '' }}</td>
                     <td>{{ date('d-m-Y', strtotime($row->register_date)) }}</td>
@@ -56,8 +65,17 @@
                         @if ($row->deploma_flag == 1)
                             الحجز تابع دبلومة
                         @else
-                            {{ $row->student->status->request_status ?? '' }}
-                            @if ($row->student && $row->student->request_status_id == 3)
+                            {{ $row->status->request_status ?? '' }}
+                            @if ($row->student && $row->status_id == 4)
+                                <div class="btn-group">
+
+
+                                    <button type="button" class="btn btn-success text-success" data-toggle="modal"
+                                        data-target="#student-connect{{ $row->student->id ?? '' }}"> إشتراك
+                                    </button>
+                                </div>
+                            @endif
+                            @if ($row->student && $row->status_id == 3)
                                 <div class="btn-group">
 
 
@@ -67,7 +85,7 @@
                                     </button>
                                 </div>
                             @endif
-                            @if ($row->student && $row->student->request_status_id == 2)
+                            @if ($row->student && $row->status_id == 2)
                                 <div class="btn-group">
 
                                     <button type="button" class="btn btn-success text-success" data-toggle="modal"
@@ -83,7 +101,8 @@
                     <td>{{ $row->student->note ?? '' }}</td>
                     <td>
                         <div class="btn-group">
-                            <button type="button" class="btn btn-default" data-toggle="modal"
+                            <button type="button" @if ($row->status_id == 2 || $row->status_id == 1 || (($row->round && $row->round->status_id == 1) || $row->round->status_id == 2)) disabled @endif
+                                class="btn btn-default" data-toggle="modal"
                                 data-target="#delStudent{{ $row->id }}"><i class="fa fa-times"
                                     title="حذف"></i></button>
                         </div>
@@ -110,7 +129,7 @@
                                     ?>
                                     <div class="modal-body text-center">
                                         <h3><i class="fa fa-edit "></i></h3>
-                                        <h4> تسجيل سداد </h4>
+                                        <h4> تسجيل سداد {{ $row->student->name ?? '' }} </h4>
                                         <input type="hidden" name="round_id" value="{{ $roundSS->id }}">
                                         <input type="hidden" name="student_id"
                                             @if ($row->student) value="{{ $row->student->id }}" @endif>
@@ -216,9 +235,82 @@
                                 </div>
                             </form>
                         </div>
-            @endforeach
+                    </div>
+                    <!-- Add Student Modal -->
+                    <div class="modal fade dir-rtl" id="student-connect{{ $row->student->id ?? '' }}" role="dialog"
+                        aria-labelledby="exampleModalLabel" aria-hidden="true">
+                        <div class="modal-dialog" role="document">
+                            <div class="modal-content">
+                                <div class="modal-header bg-light">
+                                    <h5 class="modal-title" id="exampleModalLabel">إشتراك طالب</h5>
+                                    <button type="button" class="close m-0 p-0 text-white" data-dismiss="modal"
+                                        aria-label="Close">
+                                        <span aria-hidden="true">&times;</span>
+                                    </button>
+                                </div>
+                                <form action="{{ route('connect-student-round') }}" method="post">
+                                    @csrf
+                                    <div class="modal-body text-center">
+                                        <h3><i class="fa fa-edit "></i></h3>
+                                        <h4> تأكيد إضافة الطالب {{ $row->student->name ?? '' }} </h4>
+                                        <input type="hidden" name="round_id" value="{{ $roundSS->id }}">
+                                        <input type="hidden" name="student_id" value="{{ $row->student_id }}">
+                                        <div class="row">
+                                            <div class="modal-body bg-light">
+                                                <p><i class="fa fa-fire "></i></p>
+                                                <p> هل تريد إشتراك الطالب فى المجموعة ؟</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="modal-footer">
+                                        <button type="button" class="btn btn-secondary" data-dismiss="modal">لا</button>
 
-        </tbody>
+                                        <button type="submit" class="btn btn-success">نعم</button>
+
+
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </tr>
+
+                <tr class="cat{{ $index + 1 }} display-none">
+                    <td><a href="#" class="pitcher"> </a></td>
+                    <td>رقم الفاتورة </td>
+                    <td colspan="2">تاريخ الفاتورة </td>
+                    <td colspan="2"> نوع الدفع </td>
+
+                    <td>المبلغ المطلوب </td>
+                    <td>المبلغ المدفوع</td>
+                    <td>المبلغ المتبقى</td>
+                    <td>طباعة</td>
+
+                </tr>
+                @foreach ($invoice as $ind => $fin)
+                    <tr class="cat{{ $ind + 1 }} display-none" style="background: #ddd !important">
+                        <td><a href="#" class="pitcher" data-prod-cat="{{ $ind + 1 }}"> </a></td>
+
+                        <td>{{ $fin->invoice_no }}</td>
+                        <td colspan="2">{{ date('d-m-Y', strtotime($fin->invoice_date)) }}</td>
+                        <td colspan="2">{{ $fin->type->payment_type ?? '' }}</td>
+
+                        <td>{{ $fin->total_required_fees }}</td>
+                        <td>{{ $fin->total_fees_new }}</td>
+                        <td>{{ $fin->total_required_fees - $fin->total_fees_new }}</td>
+                        <td>
+                            <div class="btn-group">
+                                <a href="{{ route('invoice.edit', $fin->id) }}" class="btn btn-default"><i
+                                        class="fa fa-edit" title="تعديل"></i></a>
+
+                            </div>
+                        </td>
+                    </tr>
+                @endforeach
+                <?php
+                $invoice = null;
+                ?>
+            @endforeach
 
 
         </tbody>
@@ -300,7 +392,8 @@
                                     style="width: 100%;">
                                     <option selected="selected">...</option>
                                     @foreach ($allStudents as $all)
-                                        <option value="{{ $all->id }}">{{ $all->name }} / {{ $all->mobile }}
+                                        <option value="{{ $all->id }}">{{ $all->name }} /
+                                            {{ $all->mobile }}
                                         </option>
                                     @endforeach
 
@@ -390,7 +483,7 @@
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-dismiss="modal">إلغاء</button>
-                    @if (count($students) >= $roundSS->room->capacity )
+                    @if (count($students) >= $roundSS->room->capacity)
                         <input type="hidden" name="wait" value="1">
                         <button type="submit" class="btn btn-warning">حفظ فى الانتظار</button>
                     @else

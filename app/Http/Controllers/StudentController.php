@@ -65,14 +65,12 @@ class StudentController extends Controller
             // Disable foreign key checks!
             DB::statement('SET FOREIGN_KEY_CHECKS=0;');
             $input = $request->except(['_token', 'round_id']);
-            if ($request->get('wait') && $request->get('wait')==1) {
-                $input['request_status_id']=4;
-
+            if ($request->get('wait') && $request->get('wait') == 1) {
+                $input['request_status_id'] = 4;
 
             } else {
 
-                $input['request_status_id']=3;
-
+                $input['request_status_id'] = 3;
 
             }
             $student = Student::create($input);
@@ -87,14 +85,12 @@ class StudentController extends Controller
                 'total_paid' => 0,
 
             ];
-            if ($request->get('wait') && $request->get('wait')==1) {
-                $values['status_id']=4;
-
+            if ($request->get('wait') && $request->get('wait') == 1) {
+                $values['status_id'] = 4;
 
             } else {
 
-                $values['status_id']=3;
-
+                $values['status_id'] = 3;
 
             }
 
@@ -181,24 +177,51 @@ class StudentController extends Controller
 
         ];
 
-$student = Student::where('id', $request->get('student_id'))->first();
-if ($request->get('wait') && $request->get('wait')==1) {
-    $input['status_id']=4;
-    $student->request_status_id = 4;
-    $student->update(); // dd(1);
+        $student = Student::where('id', $request->get('student_id'))->first();
+        if ($request->get('wait') && $request->get('wait') == 1) {
+            $input['status_id'] = 4;
+            $student->request_status_id = 4;
+            $student->update(); // dd(1);
 
-} else {
-    $student->request_status_id = 3;
-    $input['status_id']=3;
-    $student->update();
-    // dd($student);
+        } else {
+            $student->request_status_id = 3;
+            $input['status_id'] = 3;
+            $student->update();
+            // dd($student);
 
-}
+        }
         Student_round::create($input);
 
         return redirect()->route($this->routeName . 'show', $request->get('round_id'))->with('flash_success', 'تم الحفظ بنجاح');
     }
 
+    public function connectStudent(Request $request)
+    {
+        $round = Round::where('id', $request->get('round_id'))->first();
+        $input = [
+            'round_id' => $request->get('round_id'),
+            'student_id' => $request->get('student_id'),
+            'status_id' => 3,
+
+        ];
+
+        $student = Student::where('id', $request->get('student_id'))->first();
+if($student){
+    $student->request_status_id = 3;
+
+    $student->update();
+}
+
+
+        $sudent_round = Student_round::where('round_id', '=', $request->get('round_id'))->where('student_id', '=', $request->get('student_id'))->first();
+        if($sudent_round){
+            $sudent_round->status_id = 3;
+            $sudent_round->update();
+        }
+
+
+        return redirect()->route($this->routeName . 'show', $request->get('round_id'))->with('flash_success', 'تم الحفظ بنجاح');
+    }
     public function addStudentDepolma(Request $request)
     {
         $round = Round::where('id', $request->get('round_id'))->first();
@@ -211,7 +234,7 @@ if ($request->get('wait') && $request->get('wait')==1) {
 
         ];
         $student = Student::where('id', $request->get('student_id'))->first();
-        if ($request->get('wait') && $request->get('wait')==1) {
+        if ($request->get('wait') && $request->get('wait') == 1) {
             // $input['status_id']=4;
             $student->request_status_id = 4;
             $student->update(); // dd(1);
